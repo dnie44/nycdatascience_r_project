@@ -1,3 +1,7 @@
+# file types and directories to ignore
+/data/
+*.pdf
+
 # History files
 .Rhistory
 .Rapp.history
