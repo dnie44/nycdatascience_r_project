@@ -75,14 +75,16 @@ pop = pop %>%
          per_DIS = round(CMS_n*100000/DIS,2),
          cases_SEN = round(CMS_cases*100000/SEN),)
 View(pop)
+# Export to csv
+pop %>% write.csv('./data/density_analysis.csv',row.names = F)
 
 # Use leaflet to map the density in each NYS county
 library(leaflet)
-library(rgdal)
+library(geojsonio)
 # Set value for the minZoom and maxZoom settings.
 leaflet(options = leafletOptions(minZoom = 1, maxZoom = 14))
 
-map_spdf <- rgdal::readOGR("./states_geo.json")
+map_spdf <- geojsonio::geojson_read(("./states_geo.json"),what = "sp")
 map_spdf = map_spdf %>% filter(STATE!='72') # remove PR
 
 # join Agency and population data to spatial data
@@ -102,7 +104,7 @@ pal_g <- colorNumeric(palette = "Greens",domain = usmap$Cost)
 
 # initiate leaflet with ny spatial data
 m <- leaflet(usmap) %>% 
-  setView(-98.35, 39.7, zoom = 3) %>%
+  setView(-98.35, 39.7, zoom = 4) %>%
   addProviderTiles(providers$CartoDB.DarkMatterNoLabels)
   
 # create map show function
@@ -122,7 +124,9 @@ mapshow <- function(c,p) {
                       direction = "auto"))
 }
 
-mapshow(usmap$den_SEN,pal_2)
+# D.C. is an outlier in terms of Senior Population Density
+us_noDC = usmap %>% filter(STATE!='11') # remove D.C.
+mapshow(us_noDC$den_SEN,pal_2)
 
 mapshow(usmap$per_SEN,pal_1)
 mapshow(usmap$per_DIS,pal_1)

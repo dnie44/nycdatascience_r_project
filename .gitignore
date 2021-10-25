@@ -1,6 +1,8 @@
 # file types and directories to ignore
 /data/
 *.pdf
+*.json
+*.csv
 
 # History files
 .Rhistory

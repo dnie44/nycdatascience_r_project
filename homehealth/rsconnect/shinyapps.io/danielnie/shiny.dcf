@@ -1,0 +1,11 @@
+name: shiny
+title:
+username:
+account: danielnie
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4946871
+bundleId: 5172968
+url: https://danielnie.shinyapps.io/shiny/
+when: 1635127208.96537
+lastSyncTime: 1635127208.96537
