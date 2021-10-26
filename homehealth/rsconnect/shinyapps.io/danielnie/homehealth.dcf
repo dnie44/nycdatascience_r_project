@@ -1,0 +1,11 @@
+name: homehealth
+title:
+username:
+account: danielnie
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4958561
+bundleId: 5176825
+url: https://danielnie.shinyapps.io/homehealth/
+when: 1635210920.44799
+lastSyncTime: 1635210920.44799

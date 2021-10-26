@@ -1,4 +1,7 @@
 library(shiny)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(dashboardthemes)
 library(tidyverse)
 library(spdplyr)
 library(data.table)
@@ -16,7 +19,7 @@ pop = readr::read_csv('./density_analysis.csv')
 # join Agency and population data to spatial data
 usmap = merge(map_spdf, 
               pop %>% 
-                transmute(STATE,SEN,per_SEN,per_DIS,cases_SEN,Cost),
+                transmute(STATE,SEN,per_SEN,per_DIS,cases_SEN,avg_cost),
               by.x = "STATE", by.y = "STATE")
 
 # calculate population density of SENIORS (seniors/sq Mile)
@@ -39,13 +42,17 @@ mapshow <- function(c,p) {
   # c takes in target spatial.DF plot column
   # p specifies palette
   label_text = paste0(usmap$NAME, ": ",c)
-  m %>% addPolygons(color = 'white', smoothFactor = 0.5, weight = '1.5',
-                    fillOpacity = 1, fillColor = ~p(c), 
-                    highlightOptions = highlightOptions(color = "orange", weight = 2,
-                                                        bringToFront = TRUE),
-                    label = label_text,
-                    labelOptions = labelOptions(
-                      style = list("font-weight" = "normal", padding = "1px 3px"),
-                      textsize = "14px",
-                      direction = "auto"))
+  m %>% 
+    addPolygons(color = 'white', smoothFactor = 0.5, weight = '1.5',
+                fillOpacity = 1, fillColor = ~p(c), 
+                highlightOptions = 
+                  highlightOptions(color = "orange", weight = 2,
+                                   bringToFront = TRUE),
+                label = label_text,
+                labelOptions = labelOptions(
+                  style = list("font-weight" = "normal", padding = "1px 3px"),
+                  textsize = "14px",
+                  direction = "auto")) %>% 
+    addLegend(position = "bottomleft", pal = p, values = ~c, 
+              title = "Density", opacity = 1)
 }

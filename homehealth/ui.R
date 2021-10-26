@@ -1,9 +1,5 @@
 ###### ui.R ######
 
-library(shiny)
-library(shinydashboard)
-library(dashboardthemes)
-
 dashboardPage(
   dashboardHeader(title = span("How Caring is ",
                           span("Home Healthcare?",
@@ -12,10 +8,12 @@ dashboardPage(
                               color: SteelBlue; 
                               font-size: 26px")),
                   titleWidth = 390,
-                  tags$li(actionLink("aboutlink",
-                                     label = " About", 
-                                     icon = icon("info")),
-                          class = "dropdown")
+                  userOutput("author"),
+                  dropdownMenu(type = 'message',
+                               messageItem(from = 'Author',
+                                           message = 'Last Updated: 10-25-2021',
+                                           icon = icon("info-circle"),
+                                           time = "22:00"))
                   ),
   # Sidebar -------------------------------------------------------------------
   dashboardSidebar(
@@ -28,8 +26,9 @@ dashboardPage(
                      image = 'https://dnie44.github.io/assets/img/wave.png'),
     
     sidebarMenu(
-      menuItem("Plots", tabName = "plots", icon = icon("map")),
-      menuItem("Data", tabName = "data", icon = icon("database"))
+      menuItem("Motivation", tabName = "motiv", icon = icon("heartbeat")),
+      menuItem("HHA Coverage", tabName = "maps", icon = icon("globe-americas")),
+      menuItem("Data", tabName = "data", icon = icon("layer-group"))
       ),
     
     selectizeInput(inputId='state',label='Select State',
@@ -58,12 +57,17 @@ dashboardPage(
       theme = "grey_dark"
     ),
     tabItems(
-      tabItem(tabName = 'plots',
+      tabItem(tabName = 'motiv', 
+              fluidRow()),
+      tabItem(tabName = 'maps',
               fluidRow(
-                column(6, leafletOutput("map_1")),
                 column(6, plotOutput("delay"))
-              )),
+                ),
+              fluidRow(
+                column(6, leafletOutput("map_1"))
+                )              
+              ),
       tabItem(tabName = 'data', dataTableOutput('table'))
     )
-  ),
+  )
 )
