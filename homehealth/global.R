@@ -1,8 +1,6 @@
 library(shiny)
 library(tidyverse)
-library(dplyr)
 library(spdplyr)
-library(ggplot2)
 library(data.table)
 library(leaflet)
 library(geojsonio)

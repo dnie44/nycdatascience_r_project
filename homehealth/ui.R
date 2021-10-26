@@ -20,9 +20,9 @@ dashboardPage(
   # Sidebar -------------------------------------------------------------------
   dashboardSidebar(
     sidebarUserPanel(name = span("An R Project    ",
-                                 style = "font-weight: 500; 
+                                 style = "font-weight: 700; 
                                  color: SteelBlue; 
-                                 font-size: 14px"),
+                                 font-size: 16px"),
                      subtitle = span("by Daniel Nie    ",
                                      style = "color: SteelBlue"),
                      image = 'https://dnie44.github.io/assets/img/wave.png'),
@@ -33,7 +33,22 @@ dashboardPage(
       ),
     
     selectizeInput(inputId='state',label='Select State',
-                   choices=unique(pop$STNAME))
+                   choices=unique(pop$STNAME)),
+    
+    ###HTML Tag Code###
+    # Fixes user-Panel color issue between shiny-dashboard and leaflet
+    tags$head(
+      tags$style(
+        HTML("
+        .skin-blue .main-sidebar .sidebar .user-panel {
+        background-color: #202022; 
+        }
+        .skin-blue .main-sidebar .sidebar .user-panel .pull-left{
+        background-color: #202022;
+        }
+        ")
+      ))
+    
     ),
   
   # Body -------------------------------------------------------------------

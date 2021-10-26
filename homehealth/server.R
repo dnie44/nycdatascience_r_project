@@ -18,7 +18,6 @@ function(input, output) {
   )
   
   
-  
   #-Data Table------------------------------------------------------------------
   output$table <- renderDataTable(
     pop # %>% filter(
