@@ -15,7 +15,7 @@ st_name = function(cs) {
 }
 st_name('DC') #--> "District of Columbia"
 
-# raw CMS Home Health Agency data
+# read in raw CMS Home Health Agency general data
 CMS_raw = read_csv('./data/HH_Provider.csv')
 
 # drop unused columns and rename to better column names
@@ -48,6 +48,38 @@ CMS_raw = CMS_raw %>%
 # Drop: GU (Guam), MP (Northern Mariana I's), PR, VI (Virgin I's)
 CMS_raw = subset(CMS_raw, !(State %in% c('GU','MP','PR','VI')))
 
-View(CMS_raw)
-# Export to csv
+dim(CMS_raw) #11,131 agencies
+# Export Agency Data for Density Calculation: "hh_agencies.csv"
 CMS_raw %>% write.csv('./data/hh_agencies.csv',row.names = F)
+# This should be the full list of Agencies certified with the CMS, before filtering out 
+# those with NaN or Not Avail survey data
+
+#--------------------------------------------------------------------------------------------------
+
+# read in raw CMS Home Health Survey of Patient Experience Data
+CMS_survey = read_csv('./data/HHCAHPS_Provider.csv')
+
+# Keep (select) only used columns and rename to better names
+CMS_survey = CMS_survey %>% select(-contains(c('Footnote','Star Rating','Surveys','Response'))) %>% 
+  rename(prof_pct = `Percent of patients who reported that their home health team gave care in a professional way`,
+         comm_pct = `Percent of patients who reported that their home health team communicated well with them`,
+         med_pct = `Percent of patients who reported that their home health team discussed medicines, pain, and home safety with them`,
+         rating_pct = `Percent of patients who gave their home health agency a rating of 9 or 10 on a scale from 0 (lowest) to 10 (highest)`,
+         rcmend_pct = `Percent of patients who reported YES, they would definitely recommend the home health agency to friends and family`,
+         Cert_num = `CMS Certification Number (CCN)`)
+
+# Filter out rows that have 'Not Avail' as every column value
+CMS_survey = CMS_survey %>% filter(rowSums(CMS_survey[,2:6]=='Not Available')!=5)
+
+# Merge survey data into CMS_raw
+CMS_survey$Cert_num = as.numeric(CMS_survey$Cert_num)
+CMS_raw = left_join(CMS_raw,CMS_survey,by='Cert_num')
+
+# Filter out rows from final merged data that have more than 14 NaN
+CMS_raw = CMS_raw %>% filter(rowSums(is.na(CMS_raw))<15)
+
+dim(CMS_raw) #8704 agencies
+# Export to csv "hh_data.csv"
+# This is data to be used for Agency Outcomes and Patient Experience analysis
+CMS_raw %>% write.csv('./data/hh_data.csv',row.names = F)
+
