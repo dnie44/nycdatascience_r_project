@@ -1,6 +1,6 @@
 library(tidyverse)
 library(spdplyr)
-source('zip_ref.R')
+source('helper.R')
 
 # import population and Home Health Agency data
 pop = read_csv('./data/population.csv')
@@ -11,6 +11,7 @@ hha_state = hha %>% group_by(State) %>%
   summarise(total_cases = sum(n_cases), 
             total_agncy = n(),
             avg_cost = round(mean(Cost, na.rm = TRUE),4)) 
+
 # mutate State name column for join
 hha_state = hha_state %>% mutate(STNAME = st_name(State))
 View(hha_state)

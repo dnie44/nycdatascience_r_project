@@ -3,6 +3,7 @@
 *.pdf
 *.json
 *.csv
+*.png
 
 # History files
 .Rhistory

@@ -1,6 +1,23 @@
 library(tidyverse)
 
-####(2)####
+#HELPER FUNCTIONS
+
+# function to convert STATE CODE to State NAME, i.e. NY == New York
+st_codes = read_csv('./data/State_codes.csv')
+st_name = function(cs) {
+  #takes in state codes (cs) and returns state names
+  result <- c()
+  for (c in cs) {
+    result = c(result, st_codes %>% 
+                 filter(Code == c) %>% 
+                 select(State) %>% 
+                 unlist())
+  }
+  result
+}
+st_name('DC') #--> "District of Columbia"
+
+
 # Clean ZIP-to-COUNTY reference file
 # Create a custom function to return county code or name
 
