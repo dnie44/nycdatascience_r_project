@@ -1,4 +1,5 @@
 library(tidyverse)
+library(RSQLite)
 source('helper.R')
 
 # read in raw CMS Home Health Agency general data
@@ -32,11 +33,25 @@ CMS_raw = CMS_raw %>%
 # Drop: GU (Guam), MP (Northern Mariana I's), PR, VI (Virgin I's)
 CMS_raw = subset(CMS_raw, !(State %in% c('GU','MP','PR','VI')))
 
+head(CMS_raw)
+colnames(CMS_raw)
 dim(CMS_raw) #11,131 agencies
 # Export Agency Data for Density Calculation: "hh_agencies.csv"
 CMS_raw %>% write.csv('./data/hh_agencies.csv',row.names = F)
 # This should be the full list of Agencies certified with the CMS, before filtering out 
 # those with NaN or Not Avail survey data
+
+#=====Export to SQLITE Database File==============
+db_name = 'hh_data.sqlite'
+## connect to database
+conn <- dbConnect(drv = SQLite(),
+                  dbname = db_name)
+## write table
+dbWriteTable(conn = conn,
+             name = 'hh_all',
+             value = CMS_raw)
+## disconnect
+dbDisconnect(conn)
 
 #--------------------------------------------------------------------------------------------------
 
@@ -102,3 +117,19 @@ CMS_raw = CMS_raw %>% relocate(Admissions, .after = Star_rating)
 # This is data to be used for Agency Outcomes and Patient Experience analysis
 CMS_raw %>% write.csv('./data/hh_data.csv',row.names = F)
 
+#=====Export to SQLITE Database File==============
+db_name = 'hh_data.sqlite'
+## connect to database
+conn <- dbConnect(drv = SQLite(),
+                  dbname = db_name)
+## write table
+dbWriteTable(conn = conn,
+             name = 'hh_analysis',
+             value = CMS_raw)
+## disconnect
+dbDisconnect(conn)
+
+#=====SQLITE Database File==============
+# 2 TABLES
+# 1 hh_all: all data
+# 2 hh_analysis: for analysis

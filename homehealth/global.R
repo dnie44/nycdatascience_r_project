@@ -7,6 +7,7 @@ library(spdplyr)
 library(data.table)
 library(leaflet)
 library(geojsonio)
+source('SQLhelper.R')
 
 # DEPLOY/UPDATE USING "rsconnect::deployApp('~/bootcamp/r_project/homehealth')"
 
@@ -58,3 +59,5 @@ mapshow <- function(c,p) {
     addLegend(position = "bottomleft", pal = p, values = ~c, 
               title = "Density", opacity = 1)
 }
+
+#------------------------------------------------------------------------------

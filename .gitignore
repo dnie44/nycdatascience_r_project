@@ -4,6 +4,7 @@
 *.json
 *.csv
 *.png
+*.sqlite
 
 # History files
 .Rhistory

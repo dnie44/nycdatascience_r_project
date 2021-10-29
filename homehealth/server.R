@@ -1,4 +1,18 @@
-function(input, output) {
+function(input, output, session) {
+  #-------------------------------------------------------------------------
+  # SQL querying
+  # connect to server
+  conn = dbConn(session, 'hh_data.sqlite')
+  
+  user_db <- reactive(dbGetData(conn,
+                                tblname = 'hh_all',
+                                st_name(input$state)))
+  
+  observeEvent(input$state, {
+    choices = stringr::str_to_title(unique(user_db()[, City]))
+    updateSelectizeInput(session, inputId = "city", choices = choices)
+  })
+  
   #-------------------------------------------------------------------------
   # Reactive CHOSEN STATE
   chosen_st <- reactive({
@@ -64,11 +78,7 @@ function(input, output) {
   
   #-Data Table------------------------------------------------------------------
   output$table <- renderDataTable(
-    pop # %>% filter(
-      #origin == input$origin,
-      #dest == input$dest
-      #month == input$month
-    #)
+    user_db() %>% filter(City == stringr::str_to_upper(input$city))
   )
   
   #-Other Modals----------------------------------------------------------------

@@ -31,8 +31,10 @@ dashboardPage(
       menuItem("Data", tabName = "data", icon = icon("layer-group"))
       ),
     
-    selectizeInput(inputId='state',label='Select State',
+    selectizeInput(inputId='state', label='Select State',
                    choices=unique(pop$STNAME)),
+    selectizeInput(inputId ='city', label = 'Select City',
+                   choices = NULL),
     
     #------------HTML Tag Code------------
     # Fixes user-Panel color issue between shiny-dashboard and leaflet
