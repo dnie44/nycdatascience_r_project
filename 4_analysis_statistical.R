@@ -1,6 +1,12 @@
 library(tidyverse)
 library(ggridges)
 source('helper.R')
+#------Anti-Aliased Graphs on Windows-----------
+library('Cairo')
+CairoWin()
+#ggsave(g, filename = 'temp.png', dpi = 300, type = 'cairo',
+#width = 8, height = 4, units = 'in')
+#-----------------------------------------------
 
 data = read_csv('./data/hh_data.csv')
 
@@ -9,9 +15,11 @@ colnames(data)
 #Analysis of COST of HH Agency differences between Ownership Types
 #-------------------------------------------------------------------------------
 #Plot Density
+summary(data$Cost)
 data %>% ggplot(aes(x = Cost, y = Own_type, group = Own_type)) + 
   stat_density_ridges(quantile_lines = TRUE, 
-                      quantiles = c(0.025, 0.975), alpha = 0.7, size=1) +
+                      quantiles = c(0.025, 0.5, 0.975), 
+                      alpha = 0.7, size=0.8) +
   ylab('') + theme(legend.position = "none")
 
 # Sizes for each type still differ
@@ -20,6 +28,7 @@ bartlett.test(data$Cost ~ data$Own_type)  # p-val < 0.0001
 
 #sample from the larger groups?
 sampled_data = data %>% group_by(Own_type) %>% sample_n(364, replace = F)
+summary(sampled_data$Cost)
 
 #Plot Density
 sampled_data %>% ggplot(aes(x = Cost, y = Own_type, group = Own_type)) + 
@@ -113,7 +122,7 @@ scat + geom_point(aes(y=Q_stars), color = 'navy', alpha=0.3) +
 # Scatter matrix, is faster...
 
 # Correlation Matrix
-cor(data[,10:29], use = "complete.obs")
+cor(data[,9:29], use = "complete.obs")
 
 # Customize upper panel of scatter matrix
 upper.panel<-function(x, y){

@@ -96,10 +96,11 @@ mapshow <- function(c,p) {
 us_noDC = usmap %>% filter(STATE!='11') # remove D.C.
 mapshow(us_noDC$den_SEN,pal_2)
 
-mapshow(usmap$per_SEN,pal_1)
+mapshow(usmap[[11]],pal_1)
 mapshow(usmap$per_DIS,pal_1)
 mapshow(usmap$cases_SEN,pal_3)
-mapshow(usmap$avg_cost,pal_g)
+mapshow(usmap[[10]],pal_g)
+
 
 #------------------------------------------------------------------------------
 # Plot sorted bar charts for better sense of ranking

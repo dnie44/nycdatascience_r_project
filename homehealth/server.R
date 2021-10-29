@@ -1,22 +1,66 @@
 function(input, output) {
-  chosen <- reactive({
+  #-------------------------------------------------------------------------
+  # Reactive CHOSEN STATE
+  chosen_st <- reactive({
     pop %>%
       filter(
         STNAME == input$state
       )
   })
+  # Reactive CHOSEN MAP
+  chosen_map <- reactive({
+    switch(
+      input$maptype,
+      'Agency vs Seniors' = 7,
+      'Agency vs Disabled'= 8,
+      'Cases vs Seniors' = 9,
+      'State Costs' = 10,
+      'Pop. Density of Seniors' = 11)
+  })
   
-  output$map_1 <- renderLeaflet(mapshow(usmap$per_SEN,pal_1))
+  #-------------------------------------------------------------------------
+  # Outputs
+  # SELECTION TEXT
+  output$selected_map <- renderText({ 
+    switch(chosen_map()-6,
+           'Number of Agencies per 100,000 Seniors',
+           'Number of Agencies per 100,000 Disabled',
+           'Number of Cases handled per 100,000 Seniors',
+           'Average Agency Costs (as a ratio vs. National average)',
+           'Population Density of Seniors (Seniors per Square Mile)'
+           )
+  })
+  
+  # US MAPS
+  output$map_1 <- renderLeaflet(mapshow(usmap[[chosen_map()]],pal_1))
+  
+  # STATE RANKINGS
+  top_bott <- function(n) {
+    # function takes in target column parameter (n == column index)
+    # and returns the top and bottom 5 ranked states
+    usmap %>%
+      filter(dense_rank(.[[n]]) <= 5 | dense_rank(desc(.[[n]])) <= 5) %>% 
+      arrange(.[[n]]) %>% 
+      transmute(NAME=factor(NAME, levels=NAME),VAL=.[[n]])
+  }
+  
+  output$tb_ranks <- renderPlot(
+    # converts spatial DF to regular DF then plots
+    as.data.frame(top_bott(chosen_map())) %>% ggplot(aes(VAL, NAME)) + 
+      geom_segment(aes(xend=0 ,yend = NAME), size = 1.5) +
+      geom_point( size=5, color="#004885") +
+      ylab("") + xlab("")
+  )
+  
   
   output$delay <- renderPlot(
-    chosen() %>%
+    chosen_st() %>%
       ggplot(
         aes(x = STNAME, y = POP)
       ) +
       geom_col() +
       ggtitle("TEST")
   )
-  
   
   #-Data Table------------------------------------------------------------------
   output$table <- renderDataTable(

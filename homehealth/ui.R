@@ -19,10 +19,10 @@ dashboardPage(
   dashboardSidebar(
     sidebarUserPanel(name = span("An R Project    ",
                                  style = "font-weight: 700; 
-                                 color: SteelBlue; 
+                                 color: White; 
                                  font-size: 16px"),
                      subtitle = span("by Daniel Nie    ",
-                                     style = "color: SteelBlue"),
+                                     style = "color: White"),
                      image = 'https://dnie44.github.io/assets/img/wave.png'),
     
     sidebarMenu(
@@ -34,20 +34,21 @@ dashboardPage(
     selectizeInput(inputId='state',label='Select State',
                    choices=unique(pop$STNAME)),
     
-    ###HTML Tag Code###
+    #------------HTML Tag Code------------
     # Fixes user-Panel color issue between shiny-dashboard and leaflet
     tags$head(
+      HTML("<title>Home Health</title>"),
       tags$style(
         HTML("
         .skin-blue .main-sidebar .sidebar .user-panel {
-        background-color: #202022; 
+        background-color: #004885; 
         }
         .skin-blue .main-sidebar .sidebar .user-panel .pull-left{
-        background-color: #202022;
+        background-color: #004885;
         }
         ")
       ))
-    
+    #------------HTML Tag Code------------
     ),
   
   # Body -------------------------------------------------------------------
@@ -60,12 +61,30 @@ dashboardPage(
       tabItem(tabName = 'motiv', 
               fluidRow()),
       tabItem(tabName = 'maps',
+              h3("CMS Certified Home Health Agency Coverage"),
+              # ROW 1
               fluidRow(
-                column(6, plotOutput("delay"))
+                column(6, offset = 0.2,
+                       selectizeInput(inputId='maptype',
+                                      label='Select Map Information',
+                                      choices=c('Agency vs Seniors',
+                                                'Agency vs Disabled',
+                                                'Cases vs Seniors',
+                                                'State Costs',
+                                                'Pop. Density of Seniors')
+                                        )
                 ),
+                column(6,h4(textOutput("selected_map")),
+                )
+              ),
+
+              #ROW 2 & 3
               fluidRow(
                 column(6, leafletOutput("map_1"))
-                )              
+              ),
+              fluidRow(
+                column(6, plotOutput("tb_ranks"))
+              )
               ),
       tabItem(tabName = 'data', dataTableOutput('table'))
     )

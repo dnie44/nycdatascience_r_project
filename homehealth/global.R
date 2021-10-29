@@ -24,6 +24,8 @@ usmap = merge(map_spdf,
 
 # calculate population density of SENIORS (seniors/sq Mile)
 usmap = usmap %>% mutate(den_SEN = round(usmap$SEN /usmap$CENSUSAREA,2))
+# D.C. is extreme outlier
+usmap$den_SEN[9] = max(usmap$den_SEN[-9]) + 2
 
 # Set Palette
 pal_1 <- colorNumeric("viridis", NULL, reverse = T)

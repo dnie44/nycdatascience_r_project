@@ -95,6 +95,9 @@ CMS_raw = CMS_raw %>% relocate(n_cases, .before = Star_rating)
 CMS_raw = CMS_raw %>% relocate(Cost, .before = Star_rating)
 CMS_raw = CMS_raw %>% relocate(PPR_rate, .after = Star_rating)
 CMS_raw = CMS_raw %>% relocate(DTC_rate, .after = Star_rating)
+CMS_raw = CMS_raw %>% relocate(ER_visits, .after = Star_rating)
+CMS_raw = CMS_raw %>% relocate(Admissions, .after = Star_rating)
+
 # Export to csv "hh_data.csv"
 # This is data to be used for Agency Outcomes and Patient Experience analysis
 CMS_raw %>% write.csv('./data/hh_data.csv',row.names = F)
