@@ -4,7 +4,7 @@ source('helper.R')
 
 # read in raw CMS Home Health Agency general data
 CMS_raw = read_csv('./data/HH_Provider.csv')
-
+  
 # drop unused columns and rename to better column names
 CMS_raw = CMS_raw %>% 
   select(-contains(c('Footnote','Numerator','Denominator','Categorization',
@@ -33,6 +33,30 @@ CMS_raw = CMS_raw %>%
 # Drop: GU (Guam), MP (Northern Mariana I's), PR, VI (Virgin I's)
 CMS_raw = subset(CMS_raw, !(State %in% c('GU','MP','PR','VI')))
 
+# see summary for number of agencies per state
+summary(CMS_raw %>% group_by(State) %>% summarise(n()))
+# Sample sizes for each state differ drastically
+
+# see summary for number of agencies per ownership Type
+unique(CMS_raw %>% group_by(Own_type) %>% summarise(n()))
+#1 GOVERNMENT - COMBINATION GOVT & VOLUNTARY       17
+#2 GOVERNMENT - LOCAL                             127
+#3 GOVERNMENT - STATE/COUNTY                      220
+#4 PROPRIETARY                                   6828
+#5 VOLUNTARY NON-PROFIT - OTHER                   514
+#6 VOLUNTARY NON-PROFIT - PRIVATE                 715
+#7 VOLUNTARY NON PROFIT - RELIGIOUS AFFILIATION   283
+
+#Lets re-bin into 3 Types, GOVERNMENT, PROPRIETARY, NONPROFIT
+CMS_raw$Own_type = CMS_raw$Own_type %>% substr(1,1)
+CMS_raw = CMS_raw %>% mutate(Own_type = replace(Own_type, Own_type=='G','Government'),
+                             Own_type = replace(Own_type, Own_type=='P','Private'),
+                             Own_type = replace(Own_type, Own_type=='V','Non-profit'))
+unique(CMS_raw %>% group_by(Own_type) %>% summarise(n()))
+#1 Government   401
+#2 Non-profit  1699
+#3 Private     9031
+
 head(CMS_raw)
 colnames(CMS_raw)
 dim(CMS_raw) #11,131 agencies
@@ -49,7 +73,7 @@ conn <- dbConnect(drv = SQLite(),
 ## write table
 dbWriteTable(conn = conn,
              name = 'hh_all',
-             value = CMS_raw)
+             value = CMS_raw, overwrite = T)
 ## disconnect
 dbDisconnect(conn)
 
@@ -78,30 +102,6 @@ CMS_raw = left_join(CMS_raw,CMS_survey,by='Cert_num')
 CMS_raw = CMS_raw %>% filter(rowSums(is.na(CMS_raw))<15)
 
 dim(CMS_raw) #8709 agencies
-
-# see summary for number of agencies per state
-summary(CMS_raw %>% group_by(State) %>% summarise(n()))
-# Sample sizes for each state differ drastically
-
-# see summary for number of agencies per ownership Type
-unique(CMS_raw %>% group_by(Own_type) %>% summarise(n()))
-#1 GOVERNMENT - COMBINATION GOVT & VOLUNTARY       17
-#2 GOVERNMENT - LOCAL                             127
-#3 GOVERNMENT - STATE/COUNTY                      220
-#4 PROPRIETARY                                   6828
-#5 VOLUNTARY NON-PROFIT - OTHER                   514
-#6 VOLUNTARY NON-PROFIT - PRIVATE                 715
-#7 VOLUNTARY NON PROFIT - RELIGIOUS AFFILIATION   283
-
-#Lets re-bin into 3 Types, GOVERNMENT, PROPRIETARY, NONPROFIT
-CMS_raw$Own_type = CMS_raw$Own_type %>% substr(1,1)
-CMS_raw = CMS_raw %>% mutate(Own_type = replace(Own_type, Own_type=='G','Government'),
-                             Own_type = replace(Own_type, Own_type=='P','Private'),
-                             Own_type = replace(Own_type, Own_type=='V','Non-profit'))
-unique(CMS_raw %>% group_by(Own_type) %>% summarise(n()))
-#1 Government   364
-#2 Non-profit  1512
-#3 Private     6828
 
 # Reorder columns for convenience during EDA
 # Interested in Cost, Star rating, and DTC/PPR rate as target dependent vars

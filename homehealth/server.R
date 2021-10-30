@@ -29,7 +29,8 @@ function(input, output, session) {
       'Agency vs Disabled'= 8,
       'Cases vs Seniors' = 9,
       'State Costs' = 10,
-      'Pop. Density of Seniors' = 11)
+      'Private Agency Percentage' = 11,
+      'Pop. Density of Seniors' = 12)
   })
   
   #-------------------------------------------------------------------------
@@ -41,6 +42,7 @@ function(input, output, session) {
            'Number of Agencies per 100,000 Disabled',
            'Number of Cases handled per 100,000 Seniors',
            'Average Agency Costs (as a ratio vs. National average)',
+           'Percentage of Agencies that are Private',
            'Population Density of Seniors (Seniors per Square Mile)'
            )
   })
@@ -61,11 +63,11 @@ function(input, output, session) {
   output$tb_ranks <- renderPlot(
     # converts spatial DF to regular DF then plots
     as.data.frame(top_bott(chosen_map())) %>% ggplot(aes(VAL, NAME)) + 
-      geom_segment(aes(xend=0 ,yend = NAME), size = 1.5) +
+      geom_segment(aes(xend=0 ,yend = NAME), size = 1.2) +
       geom_point( size=5, color="#004885") +
-      ylab("") + xlab("")
+      ylab("") + xlab("") + 
+      geom_hline(aes(yintercept=5.5),color ='#004885',linetype=2)
   )
-  
   
   output$delay <- renderPlot(
     chosen_st() %>%
@@ -78,8 +80,61 @@ function(input, output, session) {
   
   #-Data Table------------------------------------------------------------------
   output$table <- renderDataTable(
-    user_db() %>% filter(City == stringr::str_to_upper(input$city))
+    user_db() %>% 
+      filter(City == stringr::str_to_upper(input$city)) %>%
+      # Better formatted
+      mutate(Name = stringr::str_to_title(Name),
+             Address = stringr::str_to_title(Address),
+             City = stringr::str_to_title(City),
+             Phone = paste(str_sub(Phone,1,3),
+                           str_sub(Phone,4,6),
+                           str_sub(Phone,7,10),sep='-'),
+             Star_rating = recode(as.character(Star_rating),
+                                  '1'   = paste0('★ ','(',Star_rating,')'),
+                                  '1.5' = paste0('★☆ ','(',Star_rating,')'),
+                                  '2'   = paste0('★★ ','(',Star_rating,')'),
+                                  '2.5' = paste0('★★☆ ','(',Star_rating,')'),
+                                  '3'   = paste0('★★★ ','(',Star_rating,')'),
+                                  '3.5' = paste0('★★★☆ ','(',Star_rating,')'),
+                                  '4'   = paste0('★★★★ ','(',Star_rating,')'),
+                                  '4.5' = paste0('★★★★☆ ','(',Star_rating,')'),
+                                  '5'   = paste0('★★★★★ ','(',Star_rating,')')
+             )),
+    options = list(pageLength = 10)
   )
+  
+  #-Data Table companion text boxes---------------------------------------------
+  output$DTstar <- renderInfoBox({
+    valueBox(
+      value = '★★',
+      subtitle = "NOTE:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      icon = icon("star-half-alt"), color = 'maroon', width = 12
+    )
+  })
+  
+  output$DTbox1 <- renderValueBox({
+    valueBox(
+      value = 'XXXX',
+      subtitle = "Total downloads",
+      icon = icon("landmark"), color = 'olive', width = NULL
+    )
+  })
+  
+  output$DTbox2 <- renderValueBox({
+    valueBox(
+      value = 'XXXX',
+      subtitle = "Total downloads",
+      icon = icon("landmark"), color = 'olive', width = NULL
+    )
+  })
+  
+  output$DTbox3 <- renderValueBox({
+    valueBox(
+      value = 'XXXX',
+      subtitle = "Total downloads",
+      icon = icon("landmark"), color = 'olive', width = NULL
+    )
+  })
   
   #-Other Modals----------------------------------------------------------------
   output$author <- renderUser({

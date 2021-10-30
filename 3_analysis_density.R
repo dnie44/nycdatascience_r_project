@@ -6,15 +6,26 @@ source('helper.R')
 pop = read_csv('./data/population.csv')
 hha = read_csv('./data/hh_agencies.csv')
 
-# Summarize by State, the # of Agencies & # of Cases in study
-hha_state = hha %>% group_by(State) %>%
+View(hha)
+
+# Summarize by State:
+#1 num of Agencies
+#2 num of Cases in study
+#3 percentage of private hhas in state
+#4 average cost
+
+hha_state = hha %>% group_by(State, Own_type) %>% 
+  mutate(count_pvt = ifelse(Own_type=='Private',1,0)) 
+
+hha_state = hha_state %>% group_by(State) %>% 
   summarise(total_cases = sum(n_cases), 
             total_agncy = n(),
-            avg_cost = round(mean(Cost, na.rm = TRUE),4)) 
+            pct_agncy = sum(count_pvt)/n(),
+            avg_cost = round(mean(Cost, na.rm = TRUE),4))
 
 # mutate State name column for join
 hha_state = hha_state %>% mutate(STNAME = st_name(State))
-View(hha_state)
+hha_state
 
 # join with population data
 pop = left_join(pop,hha_state,by='STNAME')

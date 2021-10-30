@@ -73,6 +73,7 @@ dashboardPage(
                                                 'Agency vs Disabled',
                                                 'Cases vs Seniors',
                                                 'State Costs',
+                                                'Private Agency Percentage',
                                                 'Pop. Density of Seniors')
                                         )
                 ),
@@ -88,7 +89,27 @@ dashboardPage(
                 column(6, plotOutput("tb_ranks"))
               )
               ),
-      tabItem(tabName = 'data', dataTableOutput('table'))
+      tabItem(tabName = 'data', 
+              h3("Home Health Agencies in Your City"),
+              fluidRow(
+                column(9, dataTableOutput('table')),
+                column(3, box(width = 12, solidHeader = TRUE, 
+                              title = '★ Star Ratings ★',
+                              background = 'navy',
+                              tags$p('The Star Rating is a summary measure of a home health agency’s 
+performance based on how well it provides patient care.'),
+                              tags$p('Visit the Centers for Medicare & Medicaid for more information'),
+                              tags$a(
+                                href="https://www.cms.gov/Medicare/Quality-Initiatives-Patient-Assessment-Instruments/HomeHealthQualityInits/Downloads/QoPC-Fact-Sheet-For-HHAs_UPDATES-7-24-16-2.pdf", 
+                                "CMS.gov"))
+                       )
+              ),
+              fluidRow(
+                valueBoxOutput("DTbox1"),
+                valueBoxOutput("DTbox2"),
+                valueBoxOutput("DTbox3")
+              )
+              )
     )
   )
 )

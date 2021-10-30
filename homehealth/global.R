@@ -20,7 +20,13 @@ pop = readr::read_csv('./density_analysis.csv')
 # join Agency and population data to spatial data
 usmap = merge(map_spdf, 
               pop %>% 
-                transmute(STATE,SEN,per_SEN,per_DIS,cases_SEN,avg_cost),
+                transmute(STATE,
+                          SEN,
+                          per_SEN,
+                          per_DIS,
+                          cases_SEN,
+                          avg_cost,
+                          pct_agncy),
               by.x = "STATE", by.y = "STATE")
 
 # calculate population density of SENIORS (seniors/sq Mile)
@@ -59,5 +65,4 @@ mapshow <- function(c,p) {
     addLegend(position = "bottomleft", pal = p, values = ~c, 
               title = "Density", opacity = 1)
 }
-
 #------------------------------------------------------------------------------
