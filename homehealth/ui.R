@@ -30,6 +30,7 @@ dashboardPage(
       menuItem("Coverage", tabName = "maps", icon = icon("globe-americas")),
       menuItem("Analysis", tabName = "charts", icon = icon("chart-area")),
       menuItem("Care Quality", tabName = "stats", icon = icon("file-medical-alt")),
+      menuItem("Conclusions", tabName = "end", icon = icon("flag-checkered")),
       menuItem(''),
       menuItem('')
       ),
@@ -153,6 +154,17 @@ dashboardPage(
                                      individual agency cost figures ranged from 0.5 to 2.0 
                                      (as a ratio vs. the national average)',
                                          style = 'font-size: 120%'),
+                                  tags$p('Home healthcare costs for each state have been shown to be
+                                         highly affected by state regulations called Certificate of
+                                         Need Laws (CON). These laws require providers to obtain
+                                         permission before expanding services. Home healthcare typically
+                                         cost more in states with CON laws.',
+                                         tags$a(
+                                           href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7166169/", 
+                                           "(source)"),
+                                         style = 'font-size: 120%'),
+                                  img(src='CON laws.png', width = 500, height = 280),
+                                  tags$br(),
                                   tags$br(),
                                   tags$p('Do costs influence patient clinical outcomes?',
                                          style = 'font-weight: 500; font-size: 140%')
@@ -189,6 +201,7 @@ dashboardPage(
       ),
       # TAB 3 - Basic EDA (Comparison of Star Rating and Ownership Type)
       tabItem(tabName = 'charts',
+              #ROW 1, bar chart selectors
               fluidRow(
                 column(6, offset = 0.5,
                        selectizeInput(inputId='startype',
@@ -205,6 +218,7 @@ dashboardPage(
               )),
                 column(6, h4(textOutput("selected_star")) )
               ),
+              #ROW 2, Star Rating EDA
               fluidRow(
                 column(6, offset = 0.5, 
                        box(width = NULL, solidHeader = TRUE, 
@@ -241,6 +255,7 @@ dashboardPage(
                        ),
                 column(6, plotOutput("starbar")
               )),
+              #ROW 3, Ownership Type EDA
               fluidRow(
                 column(6, offset = 0.5, 
                        box(width = NULL, solidHeader = TRUE, 
@@ -253,7 +268,19 @@ dashboardPage(
                                   with medium ratings are not.'),
                            tags$p('How does type of agency ownership affect costs 
                                   and patient outcomes?',
-                                  style = 'font-weight: 600; font-size: 120%'))
+                                  style = 'font-weight: 600; font-size: 120%'),
+                           tags$p('The variance of costs differed significantly
+                                  between types of ownership. Private and Govt owned
+                                  agency costs varied greatly, while Non-profit agency
+                                  costs ranged closer to 1.0. The Kruskal-Wallis test
+                                  showed means were significanly different, and Private
+                                  agencies typically cost more.'),
+                           tags$p('The discharge to community rate means also differed
+                                  significantly. Non-profit agencies typically performed
+                                  better.'),
+                           tags$p('Acute care admissions rate means between agency types were
+                                  significanly different. Private agencies performed better.')
+                           )
                        ),
                 column(6, 
                        tabBox(title = p('Ridgeline Charts',
@@ -296,8 +323,273 @@ dashboardPage(
                        )
                 )
       ),
-              
-      tabItem(tabName = 'stats','statistics'),
+      # TAB 4 - Linear Regression Attempts
+      tabItem(tabName = 'stats',
+              # Row 1, intro
+              fluidRow(
+                column(11, offset = 0.5,
+                       tags$p('I would like to determine factors associated with
+                              home health agency patient outcomes, specifically',
+                              tags$em('acute care admissions rate',
+                                     style = 'color: #CCAC00'),
+                              'and',
+                              tags$em('discharge to community rate',
+                                     style = 'color: #CCAC00'),
+                              'using linear regression.',
+                              style = 'color: white; font-weight: 500; font-size:120%'),
+                       tags$p('However, using nation-wide datapoints resulted in
+                              extremely low R-squares. Perhaps the regulatory environment
+                              and other factors are too different between states. Instead,
+                              I ran regressions for data from individual states. I chose',
+                              tags$em('Texas',
+                                      style = 'color: #CCAC00'),
+                              'as it had the most agencies (1400+), and ',
+                              tags$em('Florida',
+                                      style = 'color: #CCAC00'),
+                              ', the state with the 3rd most agencies (~800), and known 
+                              for its high senior population density.',
+                              style = 'color: white; font-weight: 500; font-size:120%'),
+                       tags$ol('*Stepwise feature selection (Forward BIC) was used to find
+                              appropriate independent variables for each model.',
+                              style = 'color: grey'),
+                       tags$ol('**If star-rating was included as an independent variable,
+                              other features that went into star-rating calculation were
+                              excluded, and vice versa.',
+                              style = 'color: grey')
+                )),
+              # LEFT Column
+              column(5,
+                     fluidRow(
+                       box(width = NULL, solidHeader = TRUE, 
+                           title = p('Texas',
+                                     style = 'color: #CCAC00; font-weight: 500;
+                                        font-size:120%'),
+                           background = 'navy',
+                           tags$p('Model: ',tags$em('Admissions <~ Cost',
+                                  style = 'font-weight: 600; font-size: 120%')),
+                           tags$li('Intercept: ',tags$em('8.366 ***',
+                                  style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B1 (Cost): ',tags$em('6.590 ***',
+                                  style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('R-squared: ',tags$em('0.036',
+                                  style = 'font-weight: 600; font-size: 110%')),
+                           tags$br(),
+                           tabBox(title = p('Regression & Residual Plots',
+                                            style = 'color: white; font-weight: 500'),
+                                  tabPanel("Regr",
+                                           img(src = 'TX_reg1.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Fit",
+                                           img(src = 'TX_plot1.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Q-Q",
+                                           img(src = 'TX_plot2.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Scale",
+                                           img(src = 'TX_plot3.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Lev",
+                                           img(src = 'TX_plot4.png',
+                                               width = 575, height = 400)),
+                                  width = 12),
+                           tags$br(),
+                           tags$p('Model: ',tags$em('DTC rate <~ Breathe_better +Medication 
+                           +Communication +Drug_edu +Bed_better +Drug_better +Flu_shots +Timely_meds',
+                                                    style = 'font-weight: 600; font-size: 120%')),
+                           tags$li('Intercept: ',tags$em('29.88 ***',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B1 (Breathe): ',tags$em('0.191 ***',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B2 (Medication): ',tags$em('-0.632 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B3 (Communication): ',tags$em('0.427 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B4 (Drug Education): ',tags$em('0.195 **',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B5 (In & Out of Bed): ',tags$em('0.262 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B6 (Drug Better): ',tags$em('-0.185 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B7 (Flu Shots): ',tags$em('0.089 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B8 (Timely Meds): ',tags$em('0.104 ***',
+                                                            style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('R-squared: ',tags$em('0.2912',
+                                                         style = 'font-weight: 600; font-size: 110%')),
+                           tags$br(),
+                           tabBox(title = p('Residual Plots',
+                                            style = 'color: white; font-weight: 500'),
+                                  tabPanel("Fit",
+                                           img(src = 'TX_plot5.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Q-Q",
+                                           img(src = 'TX_plot6.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Scale",
+                                           img(src = 'TX_plot7.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Lev",
+                                           img(src = 'TX_plot8.png',
+                                               width = 575, height = 400)),
+                                  width = 12),
+                           tags$li('VIFs: ',tags$em('none above 5.0',
+                                                         style = 'font-size: 110%'))
+                           ),
+                       
+                       )
+                     ),
+              # GAP Column
+              column(1, ''),
+              # RIGHT Column
+              column(5, 
+                     fluidRow(
+                       box(width = NULL, solidHeader = TRUE, 
+                           title = p('Florida',
+                                     style = 'color: #CCAC00; font-weight: 500;
+                                        font-size:120%'),
+                           background = 'navy',
+                           tags$p('Model: ',tags$em('Admissions <~ Cost + Communication',
+                                      style = 'font-weight: 600; font-size: 120%')),
+                           tags$li('Intercept: ',tags$em('8.755 ***',
+                                      style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B1 (Cost): ',tags$em('10.15 ***',
+                                      style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B2 (Comm): ',tags$em('-0.055 **',
+                                      style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('R-squared: ',tags$em('0.1224',
+                                      style = 'font-weight: 500; font-size: 110%')),
+                           tags$br(),
+                           tabBox(title = p('Regression & Residual Plots',
+                                            style = 'color: white; font-weight: 500'),
+                                  tabPanel("Regr",
+                                           img(src = 'FL_reg1.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Fit",
+                                           img(src = 'FL_plot1.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Q-Q",
+                                           img(src = 'FL_plot2.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Scale",
+                                           img(src = 'FL_plot3.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Lev",
+                                           img(src = 'FL_plot4.png',
+                                               width = 575, height = 400)),
+                                  width = 12),
+                           tags$br(),
+                           tags$p('Model: ',tags$em('DTC rate <~ Cost +Bed_better',
+                                                    style = 'font-weight: 600; font-size: 120%')),
+                           tags$li('Intercept: ',tags$em('96.46 ***',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B1 (Cost): ',tags$em('-28.84 ***',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('B2 (In & Out of Bed): ',tags$em('0.240 **',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$li('R-squared: ',tags$em('0.2506',
+                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$br(),
+                           tabBox(title = p('Regression & Residual Plots',
+                                            style = 'color: white; font-weight: 500'),
+                                  tabPanel("Regr",
+                                           img(src = 'FL_reg2.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Fit",
+                                           img(src = 'FL_plot5.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Q-Q",
+                                           img(src = 'FL_plot6.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Scale",
+                                           img(src = 'FL_plot7.png',
+                                               width = 575, height = 400)),
+                                  tabPanel("Lev",
+                                           img(src = 'FL_plot8.png',
+                                               width = 575, height = 400)),
+                                  width = 12),
+                           tags$li('VIFs: ',tags$em('none above 5.0',
+                                                    style = 'font-size: 110%'))
+                           )
+                       
+                       )
+                     )
+              ),
+      # TAB 5 - Conclusions
+      tabItem(tabName = 'end',
+              # Row 1 Conclusions
+              fluidRow(
+                column(5, 
+                       box(width = NULL, solidHeader = TRUE, 
+                           title = p('For the Centers for Medicare & Medicaid Services',
+                                     style = 'color: #CCAC00; font-weight: 500;
+                                        font-size:120%'),
+                           background = 'navy',
+                           img(src='unsplash_doc.jpg', width = 610, height = 'auto'),
+                           tags$br(),
+                           tags$br(),
+                           tags$li('Although costs vary widely state-to-state, 
+                                   within-state analysis showed more expensive
+                                   agencies correlated with higher acute care 
+                                   admissions and lower DTC rates. This means
+                                   at-risk patients with complicated illnesses
+                                   pay more, and may be using home health as an
+                                   alternative to institutional long-term care
+                                   (This is desired).', 
+                                   style = 'font-size: 120%'),
+                           tags$li('Patient experience survey results on caregiver
+                                   communication correlated with lower acute care
+                                   admissions. Home healthcare teams should emphasize
+                                   better communication with patients and households.', 
+                                   style = 'font-size: 120%'),
+                           tags$li("Heathcare teams should focus on improving 
+                           patients' ability to get in and out of bed as this 
+                           factor was correlated with better discharge to 
+                           community rates", 
+                                   style = 'font-size: 120%')
+                           )
+                       ),
+                column(5, 
+                       box(width = NULL, solidHeader = TRUE, 
+                           title = p('For Home Health Agency Patients and Family',
+                                     style = 'color: #CCAC00; font-weight: 500;
+                                        font-size:120%'),
+                           background = 'navy',
+                           img(src='unsplash_old.jpg', width = 610, height = 'auto'),
+                           tags$br(),
+                           tags$br(),
+                           tags$li('Agency Star Ratings are given by the CMS and 
+                           not by patients. It correlates well with quality of care. 
+                           Patients should always find an agency with at least a 
+                           Star Rating of 3 or higher.',
+                                   style = 'font-size: 120%'),
+                           tags$li('Patients and family members should make sure
+                                   agency caregivers spend time to communicate with
+                                   you regarding your illness, pain, and medication.
+                                   If you feel disatisfied, ask your agency or doctor
+                                   if you can replace your home health team.',
+                                   style = 'font-size: 120%')
+                           )
+                       )
+                ),
+              # Row 2 Limitations & Further Analysis
+              fluidRow(
+                column(10, 
+                       h3('Limitations & Further Analysis'),
+                       p('Regression analysis did not yield strong results,
+                         this could be due to missing detailed agency data, such
+                         as: (1) the exact number of home health staff or teams,
+                         (2) team composition, e.g. skilled nurses, home aides, etc.
+                         (3) agency patient case-mix.',
+                         style = 'font-size: 120%'),
+                       p('As next steps to the study, if agency patient case-mix
+                         information was available, studying agency features against
+                         patient outcomes for ', tags$em('specific diseases'), 
+                         ' could yield valuable results.',
+                         style = 'font-size: 120%')
+                       )
+                )
+              ),
+      
       #------------------------------------------------------------------------
       tabItem(tabName = 'data', 
               h3("Home Health Agencies in Your City"),
@@ -316,8 +608,7 @@ performance based on how well it provides patient care.'),
               ),
               fluidRow(
                 valueBoxOutput("DTbox1"),
-                valueBoxOutput("DTbox2"),
-                valueBoxOutput("DTbox3")
+                valueBoxOutput("DTbox2")
               )
               )
     )

@@ -85,7 +85,7 @@ function(input, output, session) {
   
   # STAR RATING COMPARISON BARCHARTS
   output$starbar <- renderPlot(
-    star_data %>% mutate(c = ifelse(Star_rating=='Unrated','yes','no')) %>% 
+    star %>% mutate(c = ifelse(Star_rating=='Unrated','yes','no')) %>% 
       ggplot(aes(x = .[[chosen_star()]], y = Star_rating)) +
       geom_col(aes(fill = c), color = 'black', show.legend = FALSE) +
       scale_fill_manual(values = c('yes' = '#3D3877', 'no' = '#CCAC00')) +
@@ -124,26 +124,23 @@ function(input, output, session) {
   #-Data Table companion text boxes---------------------------------------------
   output$DTbox1 <- renderValueBox({
     valueBox(
-      value = 'XXXX',
-      subtitle = "Total downloads",
-      icon = icon("landmark"), color = 'olive', width = NULL
-    )
+      value = p('Star Rating', 
+                style = 'color: grey; font-weight: 600; font-size: 60%'),
+      subtitle = p('Ratings are given by the CMS and not patients. It correlates 
+                   well with patient care. Find an agency with at least a 
+                   Star Rating of 3 or higher.',
+                   style = 'color: grey'),
+      icon = icon("medal"), color = 'navy'    )
   })
   
   output$DTbox2 <- renderValueBox({
     valueBox(
-      value = 'XXXX',
-      subtitle = "Total downloads",
-      icon = icon("landmark"), color = 'olive', width = NULL
-    )
-  })
-  
-  output$DTbox3 <- renderValueBox({
-    valueBox(
-      value = 'XXXX',
-      subtitle = "Total downloads",
-      icon = icon("landmark"), color = 'olive', width = NULL
-    )
+      value = p('Agency Type', 
+                style = 'color: grey; font-weight: 600; font-size: 60%'),
+      subtitle = p('Privately owned agencies performed well in avoiding acute
+      care admissions for its patients, but may cost more.',
+                   style = 'color: grey'),
+      icon = icon("landmark"), color = 'navy'    )
   })
   
   #-Other Modals----------------------------------------------------------------

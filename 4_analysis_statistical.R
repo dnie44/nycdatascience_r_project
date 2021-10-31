@@ -49,7 +49,7 @@ star_data = star_data[c(10,1:9),]
 star_data$Star_rating = factor(star_data$Star_rating, levels=unique(star_data$Star_rating))
 
 colnames(star_data)
-star_data %>% write.csv('./data/star_data.csv')
+star_data %>% write.csv('./data/star_data.csv', row.names = F)
 
 # Distribution of Star rating agencies
 star_data %>% mutate(c = ifelse(Star_rating=='Unrated','yes','no')) %>% 
@@ -327,6 +327,7 @@ cor(TX_data[,9:29], use = "complete.obs")
 FL_data = data %>% filter(State=='FL')
 cor(FL_data[,9:29], use = "complete.obs")
 # correlations look a bit better? maybe?
+0.16*0.16
 
 # Try Linear Regression on TEXAS (y = Admissions)
 #------------------------------------------------------------------------------
@@ -342,9 +343,9 @@ model.saturated = lm(Admissions ~ ., data = reg_data) #With All Features
 model.empty = lm(Admissions ~ 1, data = reg_data)     #With Intercept ONLY
 scope = list(lower = formula(model.empty), upper = formula(model.saturated))
 
-library(MASS) #The Modern Applied Statistics library
-library(car) #Companion to applied regression
 forwardBIC = step(model.empty, scope, direction = "forward", 
+                  k = log(nrow(reg_data)), )
+forwardBIC = step(model.empty, scope, direction = "both", 
                   k = log(nrow(reg_data)), )
 
 summary(forwardBIC)
@@ -398,7 +399,7 @@ reg_data = FL_data %>% select(-c('State','Cert_num','Name','Address','City',
                                  'High_rating','Recommendation'))
 reg_data = reg_data %>% drop_na() # remove rows with ANY NaN
 reg_data$Star_rating = as.factor(reg_data$Star_rating)
-dim(reg_data) #900
+dim(reg_data) #638
 
 # Prepare stepwise feature selection
 model.saturated = lm(Admissions ~ ., data = reg_data) #With All Features
@@ -429,12 +430,7 @@ plot_data %>% ggplot(aes(x=Cost,y=Admissions)) +
   geom_line(aes(y=upr), color = "red", linetype = "dashed")+
   ylab('Acute Care Admissions') + 
   geom_abline(intercept = model.simple$coefficients[1],
-              slope = model.simple$coefficients[2], linetype = 2, size = 1) +
-  annotate("text", x = 0.6, y = 30,
-           label = paste0('Beta1: ', round(model.simple$coefficients[2]/10,2))) +
-  annotate("text", x = 0.6, y = 31,
-           label = paste0('R-sqr: ', round(summary(forwardBIC)$r.squared,2)))
-
+              slope = model.simple$coefficients[2], linetype = 2, size = 1)
 
 # Linear Model 2 (y= DTC_rate)
 reg_data2 = FL_data %>% select(-c('State','Cert_num','Name','Address','City',
@@ -452,6 +448,55 @@ forwardBIC = step(model2.empty, scope, direction = "forward",
                   k = log(nrow(reg_data2)), )
 
 summary(forwardBIC)
-summary(forwardBIC)$r.square # 0.1335
-plot(forwardBIC)
+summary(forwardBIC)$r.square # 0.2939
+plot(forwardBIC) #outliers 130,526,591
 vif(forwardBIC)     # None above 5
+
+#remove outliers
+reg_data2 = reg_data2[-c(130,526,591),]
+
+#RUN AGAIN
+model2.saturated = lm(DTC_rate ~ ., data = reg_data2) #With All Features
+model2.empty = lm(DTC_rate ~ 1, data = reg_data2)     #With Intercept ONLY
+scope = list(lower = formula(model2.empty), upper = formula(model2.saturated))
+
+forwardBIC = step(model2.empty, scope, direction = "forward", 
+                  k = log(nrow(reg_data2)), )
+
+summary(forwardBIC)
+summary(forwardBIC)$r.square # 0.2939
+plot(forwardBIC) #outliers 151,228,611
+vif(forwardBIC)     # None above 5
+
+#make simple regression DTC vs Cost, for graph
+model2.simple = lm(DTC_rate ~ Cost, data = reg_data2)
+summary(model2.simple)
+
+#Constructing confidence and prediction bands for the scope of our data
+newdata = data.frame(Cost = 
+                       seq(min(reg_data2$Cost)-0.1, 
+                           max(reg_data2$Cost)+0.1, 
+                           length = 100))
+
+pred_band = predict(model2.simple, interval = "prediction")
+plot_data <- cbind(reg_data2, pred_band)
+
+plot_data %>% ggplot(aes(x=Cost,y=DTC_rate)) + 
+  geom_point(size=1, colour = '#3D3877') + 
+  geom_line(aes(y=lwr), color = "red", linetype = "dashed")+
+  geom_line(aes(y=upr), color = "red", linetype = "dashed")+
+  ylab('Discharge to Community Rates') + 
+  geom_abline(intercept = model2.simple$coefficients[1],
+              slope = model2.simple$coefficients[2], linetype = 2, size = 1)
+
+reg_data2 %>% arrange(-DTC_rate)
+
+dev.off()
+CairoWin()
+Cairo(file="Cairo_PNG.png", 
+      type="png",
+      units="in", 
+      width=5*2, 
+      height=4*2, 
+      pointsize=12*2, 
+      dpi=720)
