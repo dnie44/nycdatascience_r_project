@@ -41,13 +41,10 @@ function(input, output, session) {
       'Acute Care Admissions' = 5,
       'Discharge to Community' = 6,
       'Potentially Preventable Readmissions' = 7,
-      'Drug Consultation' = 8,
-      'Improved Mobility' = 9,
-      'Getting Out of Bed' = 10,
-      'Better at Bathing' = 11,
-      'Better Breathing' = 12,
-      'Patient Experience - Professionalism' = 13,
-      'Patient Experience - Communication' = 14)
+      'Patient Experience - Professionalism' = 8,
+      'Patient Experience - Communication' = 9,
+      'Patient Experience - Recommendation' = 10,
+      'Percent Privately Owned' = 11)
   })
 
   #-------------------------------------------------------------------------
@@ -102,13 +99,10 @@ function(input, output, session) {
            'Average Acute Care Admissions rate',
            'Average Discharge to Community rate',
            'Average Potentially Preventable Readmissions rate',
-           'Average % Patients Reported Drug Education from Staff',
-           'Average % Patients Reported Improved Mobility',
-           'Average % Patients Got Better Getting In and Out of Bed',
-           'Average % Patients Got Better at Bathing',
-           'Average % Patients Reported Improved Breathing',
            'Average % for High Ratings on Professional Care',
-           'Average % for High Ratings on Communication of Care'
+           'Average % for High Ratings on Communication of Care',
+           'Average % for Willing to Recommend Agency',
+           'Percent Privately Owned vs. Govt or Non-profit'
     )
   })
   

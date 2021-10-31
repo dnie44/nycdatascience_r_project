@@ -4,6 +4,13 @@ source('helper.R')
 #------Anti-Aliased Graphs on Windows-----------
 library('Cairo')
 CairoWin()
+Cairo(file="Cairo_PNG.png", 
+      type="png",
+      units="in", 
+      width=5*2, 
+      height=4*2, 
+      pointsize=12*2, 
+      dpi=720)
 #ggsave(g, filename = 'temp.png', dpi = 300, type = 'cairo',
 #width = 8, height = 4, units = 'in')
 #-----------------------------------------------
@@ -12,6 +19,13 @@ data = read_csv('./data/hh_data.csv')
 colnames(data)
 
 #Explore Star_rating Differences
+# calc % agencies that are Private for each Star-Rating
+temp = data %>% group_by(Star_rating, Own_type) %>% summarise(own_count = n()) %>% 
+  mutate(pvt = ifelse(Own_type=='Private',own_count,0)) %>% 
+  summarise(pct_pvt = pvt/sum(own_count)) %>% top_n(1, wt=pct_pvt)
+# Rename NA as "Unrated" and set graphing order
+temp$Star_rating = temp$Star_rating %>% replace_na('Unrated')
+
 star_data = data %>% 
   group_by(Star_rating) %>% 
   summarise(count = n(),
@@ -19,22 +33,17 @@ star_data = data %>%
             avg_Adm = round(mean(Admissions, na.rm = T),3),
             avg_DTC = round(mean(DTC_rate, na.rm = T),3),
             avg_PPR = round(mean(PPR_rate, na.rm = T),3),
-            avg_DrugEdu = round(mean(Drug_edu, na.rm = T),3),
-            avg_MoveBetter = round(mean(Move_better, na.rm = T),3),
-            avg_BedBetter = round(mean(Bed_better, na.rm = T),3),
-            avg_BathBetter = round(mean(Bath_better, na.rm = T),3),
-            avg_BreatheBetter = round(mean(Breathe_better, na.rm = T),3),
-            avg_DrugBetter = round(mean(Drug_better, na.rm = T),3),
-            avg_TimelyCare = round(mean(Timely_care, na.rm = T),3),
-            avg_TimelyMeds = round(mean(Timely_meds, na.rm = T),3),
             avg_prof = mean(Professionalism, na.rm = T),
             avg_comm = mean(Communication, na.rm = T),
             avg_recomm = mean(Recommendation, na.rm = T)) %>% 
   mutate(pct = count/sum(count)) %>% 
   relocate(pct, .after = count)
-
 # Rename NA as "Unrated" and set graphing order
 star_data$Star_rating = star_data$Star_rating %>% replace_na('Unrated')
+
+#Join temp to star_data
+star_data = left_join(star_data, temp, by = "Star_rating")
+
 #Reorder row so Unrated comes first
 star_data = star_data[c(10,1:9),]
 star_data$Star_rating = factor(star_data$Star_rating, levels=unique(star_data$Star_rating))
@@ -79,13 +88,26 @@ summary(data$Cost)
 data %>% ggplot(aes(x = Cost, y = Own_type, group = Own_type)) + 
   geom_density_ridges(quantile_lines = TRUE, 
                       quantiles = c(0.025, 0.5, 0.975),
-                      alpha = 0.9, size=0.75, fill = '#3D3877') + 
-  ylab('') + xlab('Agency Cost (ratio vs. National average)') + 
-  theme(legend.position = "none") + xlim(0.5,1.7)
+                      alpha = 0.9, size=0.75, fill = '#3D3877', color = 'white') + 
+  theme_ridges(grid = F) +
+  ylab('') + xlab('') + 
+  xlim(0.5,1.7) +
+  theme(axis.text.x = element_text(face="bold", color="white", 
+                                   size=14, angle=45),
+        axis.text.y = element_text(face="bold", color="white", 
+                                   size=14))
+
+data %>% group_by(Own_type) %>% summarise(sd(Cost, na.rm = T))
+#1 Government                 0.117
+#2 Non-profit                 0.101
+#3 Private                    0.135
 
 # Sizes for each type still differ
-bartlett.test(data$Cost ~ data$Own_type)  # p-val < 0.0001
+bartlett.test(data$Cost ~ data$Own_type)  # p-value < 0.01
 #and we do not pass Bartlett Test to satisfy homogeneity of variances
+
+kruskal.test(data$Cost ~ data$Own_type)
+# Kruskal-Wallis chi-squared = 22.951, p-value < 0.01
 
 #ANOVA on mean Costs
 #Nullhyp: Means are equal, set Alpha at 0.05
@@ -109,10 +131,20 @@ summary(aov(data$Star_rating ~ data$Own_type))
 #-------------------------------------------------------------------------------
 #Plot Density
 data %>% ggplot(aes(x = DTC_rate^3, y = Own_type, group = Own_type)) + 
-  stat_density_ridges(quantile_lines = TRUE, 
-                      alpha = 0.9, size=0.75, fill = '#3D3877') + 
-  ylab('') + xlab('Discharge to Community rates (x^3 transformed)') + 
-  theme(legend.position = "none")
+  geom_density_ridges(quantile_lines = TRUE, 
+                      quantiles = c(0.025, 0.5, 0.975),
+                      alpha = 0.9, size=0.75, fill = '#3D3877', color = 'white') + 
+  theme_ridges(grid = F) +
+  ylab('') + xlab('') + 
+  theme(axis.text.x = element_text(face="bold", color="white", 
+                                   size=14, angle=45),
+        axis.text.y = element_text(face="bold", color="white", 
+                                   size=14))
+
+data %>% group_by(Own_type) %>% summarise(sd(DTC_rate, na.rm = T))
+#1 Government                     11.5 
+#2 Non-profit                      9.80
+#3 Private                        15.7 
 
 bartlett.test(data$DTC_rate^3 ~ data$Own_type)  # p-val < 0.0001
 #ANOVA on mean DTC rate
@@ -126,10 +158,20 @@ summary(aov(data$DTC_rate^3 ~ data$Own_type))
 
 #Plot Density
 data %>% ggplot(aes(x = Admissions, y = Own_type, group = Own_type)) + 
-  stat_density_ridges(quantile_lines = TRUE, 
-                      alpha = 0.9, size=0.75, fill = '#3D3877') + 
-  ylab('') + xlab('Acute care Admission rates') + 
-  theme(legend.position = "none") + xlim(0,40)
+  geom_density_ridges(quantile_lines = TRUE, 
+                      quantiles = c(0.025, 0.5, 0.975),
+                      alpha = 0.9, size=0.75, fill = '#3D3877', color = 'white') + 
+  theme_ridges(grid = F) + xlim(0,35) +
+  ylab('') + xlab('') + 
+  theme(axis.text.x = element_text(face="bold", color="white", 
+                                   size=14, angle=45),
+        axis.text.y = element_text(face="bold", color="white", 
+                                   size=14))
+
+data %>% group_by(Own_type) %>% summarise(sd(Admissions, na.rm = T))
+#1 Government                        4.78
+#2 Non-profit                        3.43
+#3 Private                           3.97
 
 bartlett.test(data$Admissions ~ data$Own_type)  # p-val < 0.0001
 

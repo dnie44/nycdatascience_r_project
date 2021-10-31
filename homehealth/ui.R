@@ -198,13 +198,10 @@ dashboardPage(
                                        'Acute Care Admissions',
                                        'Discharge to Community',
                                        'Potentially Preventable Readmissions',
-                                       'Drug Consultation',
-                                       'Improved Mobility',
-                                       'Getting Out of Bed',
-                                       'Better at Bathing',
-                                       'Better Breathing',
                                        'Patient Experience - Professionalism',
-                                       'Patient Experience - Communication')
+                                       'Patient Experience - Communication',
+                                       'Patient Experience - Recommendation',
+                                       'Percent Privately Owned')
               )),
                 column(6, h4(textOutput("selected_star")) )
               ),
@@ -233,7 +230,7 @@ dashboardPage(
                                   rated agencies."),
                            tags$p('Patient Experience Surveys',
                                   style = 'font-weight: 600; font-size: 120%'),
-                           tags$p("We observe a steep drop in Patient Experience
+                           tags$p("We observe a slight drop in Patient Experience
                                   survey results for poorly rated agencies"),
                            tags$p('Overall, the rating system from the CMS is robust,
                                   and correlates well with patient experience and 
@@ -251,8 +248,51 @@ dashboardPage(
                                      style = 'color: #CCAC00; font-weight: 500;
                                         font-size:120%'),
                            background = 'navy',
-                           tags$p('Distribution',
+                           tags$p('Interestingly, Agencies with both high and low
+                                  star ratings are mostly privately owned, while those
+                                  with medium ratings are not.'),
+                           tags$p('How does type of agency ownership affect costs 
+                                  and patient outcomes?',
                                   style = 'font-weight: 600; font-size: 120%'))
+                       ),
+                column(6, 
+                       tabBox(title = p('Ridgeline Charts',
+                                        style = 'color: white; font-weight: 500'),
+                              tabPanel("Cost",
+                                       tags$p('Ownership vs Cost of Visit',
+                                              style = 'color: white; font-weight: 500'),
+                                       img(src = '1_Cost_ridges.png',
+                                           width = 650, height = 400),
+                                       tags$p('Std.Dev: ', tags$em('Private 0.135, 
+                                              Non-Profit 0.101, 
+                                              Government 0.117')),
+                                       tags$p('Bartlett test: ', tags$em('p-value < 0.01')),
+                                       tags$p('Kruskal-Wallis chi-squared: ', tags$em('p-value < 0.01')),
+                                       icon = icon('donate')),
+                              tabPanel("DTC",
+                                       tags$p('Ownership vs Discharge to Community rates 
+                                              (x^3 transformed data)',
+                                              style = 'color: white; font-weight: 500'),
+                                       img(src = '2_DTC_ridges.png',
+                                           width = 650, height = 400),
+                                       tags$p('Std.Dev: ', tags$em('Private 15.7, 
+                                              Non-Profit 9.80, 
+                                              Government 11.5')),
+                                       tags$p('Bartlett test: ', tags$em('p-value < 0.01')),
+                                       tags$p('Kruskal-Wallis chi-squared: ', tags$em('p-value < 0.01')),
+                                       icon = icon('city')),
+                              tabPanel("Admissions",
+                                       tags$p('Ownership vs Acute Care Admissions',
+                                              style = 'color: white; font-weight: 500'),
+                                       img(src = '3_Adm_ridges.png',
+                                           width = 650, height = 400),
+                                       tags$p('Std.Dev: ', tags$em('Private 3.97, 
+                                              Non-Profit 3.43, 
+                                              Government 4.78')),
+                                       tags$p('Bartlett test: ', tags$em('p-value < 0.01')),
+                                       tags$p('Kruskal-Wallis chi-squared: ', tags$em('p-value < 0.01')),
+                                       icon = icon('h-square')),
+                              width = 12)
                        )
                 )
       ),
