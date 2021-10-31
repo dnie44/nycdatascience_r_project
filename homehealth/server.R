@@ -32,10 +32,27 @@ function(input, output, session) {
       'Private Agency Percentage' = 11,
       'Pop. Density of Seniors' = 12)
   })
-  
+  # Reactive CHOSEN STAR RATING COMPARISON
+  chosen_star <- reactive({
+    switch(
+      input$startype,
+      'Distribution' = 3,
+      'Average Costs'= 4,
+      'Acute Care Admissions' = 5,
+      'Discharge to Community' = 6,
+      'Potentially Preventable Readmissions' = 7,
+      'Drug Consultation' = 8,
+      'Improved Mobility' = 9,
+      'Getting Out of Bed' = 10,
+      'Better at Bathing' = 11,
+      'Better Breathing' = 12,
+      'Patient Experience - Professionalism' = 13,
+      'Patient Experience - Communication' = 14)
+  })
+
   #-------------------------------------------------------------------------
   # Outputs
-  # SELECTION TEXT
+  # SELECTION TEXT for MAP
   output$selected_map <- renderText({ 
     switch(chosen_map()-6,
            'Number of Agencies per 100,000 Seniors',
@@ -69,14 +86,31 @@ function(input, output, session) {
       geom_hline(aes(yintercept=5.5),color ='#004885',linetype=2)
   )
   
-  output$delay <- renderPlot(
-    chosen_st() %>%
-      ggplot(
-        aes(x = STNAME, y = POP)
-      ) +
-      geom_col() +
-      ggtitle("TEST")
+  # STAR RATING COMPARISON BARCHARTS
+  output$starbar <- renderPlot(
+    star_data %>% mutate(c = ifelse(Star_rating=='Unrated','yes','no')) %>% 
+      ggplot(aes(x = .[[chosen_star()]], y = Star_rating)) +
+      geom_col(aes(fill = c), color = 'black', show.legend = FALSE) +
+      scale_fill_manual(values = c('yes' = '#3D3877', 'no' = '#CCAC00')) +
+      ylab('Star Rating') + xlab('')
   )
+  # SELECTION TEXT for MAP
+  output$selected_star <- renderText({ 
+    switch(chosen_star()-2,
+           'Distribution of Star ratings (%)',
+           'Average Costs (as ratio vs National rate)',
+           'Average Acute Care Admissions rate',
+           'Average Discharge to Community rate',
+           'Average Potentially Preventable Readmissions rate',
+           'Average % Patients Reported Drug Education from Staff',
+           'Average % Patients Reported Improved Mobility',
+           'Average % Patients Got Better Getting In and Out of Bed',
+           'Average % Patients Got Better at Bathing',
+           'Average % Patients Reported Improved Breathing',
+           'Average % for High Ratings on Professional Care',
+           'Average % for High Ratings on Communication of Care'
+    )
+  })
   
   #-Data Table------------------------------------------------------------------
   output$table <- renderDataTable(
@@ -88,30 +122,12 @@ function(input, output, session) {
              City = stringr::str_to_title(City),
              Phone = paste(str_sub(Phone,1,3),
                            str_sub(Phone,4,6),
-                           str_sub(Phone,7,10),sep='-'),
-             Star_rating = recode(as.character(Star_rating),
-                                  '1'   = paste0('★ ','(',Star_rating,')'),
-                                  '1.5' = paste0('★☆ ','(',Star_rating,')'),
-                                  '2'   = paste0('★★ ','(',Star_rating,')'),
-                                  '2.5' = paste0('★★☆ ','(',Star_rating,')'),
-                                  '3'   = paste0('★★★ ','(',Star_rating,')'),
-                                  '3.5' = paste0('★★★☆ ','(',Star_rating,')'),
-                                  '4'   = paste0('★★★★ ','(',Star_rating,')'),
-                                  '4.5' = paste0('★★★★☆ ','(',Star_rating,')'),
-                                  '5'   = paste0('★★★★★ ','(',Star_rating,')')
-             )),
+                           str_sub(Phone,7,10),sep='-')
+             ),
     options = list(pageLength = 10)
   )
   
   #-Data Table companion text boxes---------------------------------------------
-  output$DTstar <- renderInfoBox({
-    valueBox(
-      value = '★★',
-      subtitle = "NOTE:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      icon = icon("star-half-alt"), color = 'maroon', width = 12
-    )
-  })
-  
   output$DTbox1 <- renderValueBox({
     valueBox(
       value = 'XXXX',
@@ -156,7 +172,7 @@ function(input, output, session) {
           width = 4,
           socialButton(
             href = "https://github.com/dnie44/nycdatascience_r_project",
-            icon = icon("github")
+            icon = icon("code-branch")
           )
         ),
         dashboardUserItem(

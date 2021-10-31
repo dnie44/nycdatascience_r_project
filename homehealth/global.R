@@ -16,6 +16,7 @@ leaflet(options = leafletOptions(minZoom = 1, maxZoom = 14))
 map_spdf <- geojsonio::geojson_read(("./states_geo.json"),what = "sp")
 map_spdf = map_spdf %>% filter(STATE!='72') # remove PR
 pop = readr::read_csv('./density_analysis.csv')
+star = readr::read_csv('./star_data.csv')
 
 # join Agency and population data to spatial data
 usmap = merge(map_spdf, 

@@ -4,6 +4,7 @@
 *.json
 *.csv
 *.png
+*.jpg
 *.sqlite
 
 # History files
