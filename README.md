@@ -1,5 +1,17 @@
 # nycdatascience_r_project
-**ShinyApp** --> https://danielnie.shinyapps.io/homehealth/
+
+*An exploration of CMS Home Health Agency data to determine factors associated with patient health outcomes*
+
+Home Healthcare allows for the provision of skilled medical care to those with mobility issues or are homebound, in the comfort of their own homes. It is not only used for transitional care after hospitalization, but also plays a role in delivering preventive care to older people.
+
+Home health spending has grown rapidy. CMS Expenditures on home health increased 7.7% in 2019, outpacing the total healthcare spending increase of 4.6% for the same period. More importantly, home health has been shown to be effective in reducing mortality and admission to institutional long-term care for the elderly and frail.
+
+However, as evident in the CMS Quality indicators , there are large discrepancies in the quality of care provided by different agencies. There are also very dramatic geographic variation in home healthcare utilization.
+
+**Using home health agency data from the Centers for Medicare and Medicaid, the project explored factors associated with patient health outcomes through EDA and statistical analysis**
+
+**ShinyApp**<br> https://danielnie.shinyapps.io/homehealth/
+<br><br>
 
 **Data Sources:**<br>
 CMS Agency Data: https://data.cms.gov/provider-data/topics/home-health-services<br>
