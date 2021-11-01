@@ -106,17 +106,78 @@ dashboardPage(
                              'in home healthcare utilization.',
                            style = 'font-size: 120%')
                 ),
-                tags$img(src='Pexels Home Health.png',width = 600, height = 350)
+                tags$img(src='home_health.png',width = 600, height = 350)
                 ),
               #ROW 2 - Analysis Statement
               fluidRow(
-                box(width = 12, solidHeader = TRUE, background = 'black',
+                box(width = 11, solidHeader = TRUE, 
                     title = p('Using home health agency data from the Centers 
                     for Medicare and Medicaid, the project explored factors 
                     associated with patient health outcomes through EDA and 
-                    statistical analysis', 
+                    statistical analysis',
                               style = 'color: #CCAC00; font-weight: 500;
-                              font-size:130%'))
+                              font-size:130%'),
+                    background = 'navy', 
+                    tabBox(title = p('Data Sources & References',
+                                     style = 'color: white; font-weight: 500'),
+                           tabPanel("Data Sources",
+                                    tags$ol('Agency Quality Measures: ',HTML('&nbsp;'),
+                                    tags$a(href='https://data.cms.gov/provider-data/dataset/6jpm-sxkc',
+                                                  'data.cms.gov'), HTML('&nbsp;'),'[11176 , 59]'),
+                                    tags$ol('Agency Patient Surveys: ',HTML('&nbsp;'),
+                                           tags$a(href='https://data.cms.gov/provider-data/dataset/ccn4-8vby',
+                                                  'data.cms.gov'), HTML('&nbsp;'),'[11176 , 26]'),
+                                    tags$ol('Disability Prevalence: ',HTML('&nbsp;'),
+                                           tags$a(href='https://www.census.gov/data/tables/2010/demo/disability/p70-131.html',
+                                                  'census.gov')),
+                                    tags$ol('State Populations: ',HTML('&nbsp;'),
+                                           tags$a(href='https://www.census.gov/data/tables/time-series/demo/popest/2010s-counties-detail.html',
+                                                  'census.gov')),
+                                    tags$ol('Mapping geojson: ',HTML('&nbsp;'),
+                                           tags$a(href='https://eric.clst.org/tech/usgeojson/',
+                                                  'eric.clst.org')),
+                                    tags$br(),
+                                    tags$ol('CMS Data Dictionary: ',HTML('&nbsp;'),
+                                           tags$a(href='https://data.cms.gov/provider-data/sites/default/files/data_dictionaries/home_health/HHS_Data_Dictionary.pdf',
+                                                  'here')),
+                                    tags$ol('Understanding Star-ratings & Quality Measures: ',HTML('&nbsp;'),
+                                            tags$a(href='https://drive.google.com/file/d/1gdWnjFtXQoC4zRBjlIVTWmozQZOCtmZJ/',
+                                                   'here'))
+                                    ),
+                           tabPanel("References",
+                                    tags$ol('Welch, H. G., Wennberg, D. E., & Welch, W. P. (1996). 
+                                           The use of Medicare home health care services. 
+                                           New England Journal of Medicine, 335(5), 324-329',
+                                           HTML('&nbsp;'),
+                                           tags$a(href='https://www.nejm.org/doi/full/10.1056/NEJM199608013350506',
+                                                  'link')),
+                                    tags$ol('Elkan, R., Kendrick, D., Dewey, M., Hewitt, M., Robinson, J., 
+                                           Blair, M., Williams, D., & Brummell, K. (2001). Effectiveness 
+                                           of home based support for older people: systematic review and 
+                                           meta-analysis. BMJ (Clinical research ed.), 323(7315), 719-725',
+                                           HTML('&nbsp;'),
+                                           tags$a(href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC56889/',
+                                                  'link')),
+                                    tags$ol('Ettner, S. L., Zinn, J. S., Xu, H., Ladd, H., Nuccio, E., Sorkin, 
+                                           D. H., & Mukamel, D. B. (2020). Certificate of need and the cost 
+                                           of competition in home healthcare markets. Home health care 
+                                           services quarterly, 39(2), 51-64',
+                                           HTML('&nbsp;'),
+                                           tags$a(href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7166169/',
+                                                  'link')),
+                                    tags$ol('Centers for Medicare & Medicaid Services. (2020). 
+                                           National health expenditures 2019 highlights. 
+                                           Retrieved October, 22, 2021',
+                                           HTML('&nbsp;'),
+                                           tags$a(href='https://www.cms.gov/files/document/highlights.pdf',
+                                                  'link')),
+                                    tags$ol('National Conference of State Legislatures - State CON laws',
+                                           HTML('&nbsp;'),
+                                           tags$a(href='https://www.ncsl.org/research/health/con-certificate-of-need-state-laws.aspx',
+                                                  'link'))
+                                    ),
+                           width = 12)
+                    )
               ),
               fluidRow(),
               fluidRow()),
@@ -367,11 +428,11 @@ dashboardPage(
                            background = 'navy',
                            tags$p('Model: ',tags$em('Admissions <~ Cost',
                                   style = 'font-weight: 600; font-size: 120%')),
-                           tags$li('Intercept: ',tags$em('8.366 ***',
+                           tags$ol('Intercept: ',tags$em('8.366 ***',
                                   style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B1 (Cost): ',tags$em('6.590 ***',
+                           tags$ol('B1 (Cost): ',tags$em('6.590 ***',
                                   style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('R-squared: ',tags$em('0.036',
+                           tags$ol('R-squared: ',tags$em('0.036',
                                   style = 'font-weight: 600; font-size: 110%')),
                            tags$br(),
                            tabBox(title = p('Regression & Residual Plots',
@@ -396,25 +457,25 @@ dashboardPage(
                            tags$p('Model: ',tags$em('DTC rate <~ Breathe_better +Medication 
                            +Communication +Drug_edu +Bed_better +Drug_better +Flu_shots +Timely_meds',
                                                     style = 'font-weight: 600; font-size: 120%')),
-                           tags$li('Intercept: ',tags$em('29.88 ***',
+                           tags$ol('Intercept: ',tags$em('29.88 ***',
                                                          style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B1 (Breathe): ',tags$em('0.191 ***',
+                           tags$ol('B1 (Breathe): ',tags$em('0.191 ***',
                                                          style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B2 (Medication): ',tags$em('-0.632 ***',
+                           tags$ol('B2 (Medication): ',tags$em('-0.632 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B3 (Communication): ',tags$em('0.427 ***',
+                           tags$ol('B3 (Communication): ',tags$em('0.427 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B4 (Drug Education): ',tags$em('0.195 **',
+                           tags$ol('B4 (Drug Education): ',tags$em('0.195 **',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B5 (In & Out of Bed): ',tags$em('0.262 ***',
+                           tags$ol('B5 (Bed): ',tags$em('0.262 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B6 (Drug Better): ',tags$em('-0.185 ***',
+                           tags$ol('B6 (Drug Better): ',tags$em('-0.185 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B7 (Flu Shots): ',tags$em('0.089 ***',
+                           tags$ol('B7 (Flu Shots): ',tags$em('0.089 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B8 (Timely Meds): ',tags$em('0.104 ***',
+                           tags$ol('B8 (Timely Meds): ',tags$em('0.104 ***',
                                                             style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('R-squared: ',tags$em('0.2912',
+                           tags$ol('R-squared: ',tags$em('0.2912',
                                                          style = 'font-weight: 600; font-size: 110%')),
                            tags$br(),
                            tabBox(title = p('Residual Plots',
@@ -432,7 +493,7 @@ dashboardPage(
                                            img(src = 'TX_plot8.png',
                                                width = 575, height = 400)),
                                   width = 12),
-                           tags$li('VIFs: ',tags$em('none above 5.0',
+                           tags$ol('VIFs: ',tags$em('none above 5.0',
                                                          style = 'font-size: 110%'))
                            ),
                        
@@ -450,14 +511,14 @@ dashboardPage(
                            background = 'navy',
                            tags$p('Model: ',tags$em('Admissions <~ Cost + Communication',
                                       style = 'font-weight: 600; font-size: 120%')),
-                           tags$li('Intercept: ',tags$em('8.755 ***',
+                           tags$ol('Intercept: ',tags$em('8.755 ***',
                                       style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B1 (Cost): ',tags$em('10.15 ***',
+                           tags$ol('B1 (Cost): ',tags$em('10.15 ***',
                                       style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B2 (Comm): ',tags$em('-0.055 **',
+                           tags$ol('B2 (Comm): ',tags$em('-0.055 **',
                                       style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('R-squared: ',tags$em('0.1224',
-                                      style = 'font-weight: 500; font-size: 110%')),
+                           tags$ol('R-squared: ',tags$em('0.1224',
+                                      style = 'font-weight: 600; font-size: 110%')),
                            tags$br(),
                            tabBox(title = p('Regression & Residual Plots',
                                             style = 'color: white; font-weight: 500'),
@@ -480,14 +541,14 @@ dashboardPage(
                            tags$br(),
                            tags$p('Model: ',tags$em('DTC rate <~ Cost +Bed_better',
                                                     style = 'font-weight: 600; font-size: 120%')),
-                           tags$li('Intercept: ',tags$em('96.46 ***',
+                           tags$ol('Intercept: ',tags$em('96.46 ***',
                                                          style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B1 (Cost): ',tags$em('-28.84 ***',
+                           tags$ol('B1 (Cost): ',tags$em('-28.84 ***',
                                                          style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('B2 (In & Out of Bed): ',tags$em('0.240 **',
+                           tags$ol('B2 (Bed): ',tags$em('0.240 **',
                                                          style = 'font-weight: 500; font-size: 110%')),
-                           tags$li('R-squared: ',tags$em('0.2506',
-                                                         style = 'font-weight: 500; font-size: 110%')),
+                           tags$ol('R-squared: ',tags$em('0.2506',
+                                                         style = 'font-weight: 600; font-size: 110%')),
                            tags$br(),
                            tabBox(title = p('Regression & Residual Plots',
                                             style = 'color: white; font-weight: 500'),
@@ -507,7 +568,7 @@ dashboardPage(
                                            img(src = 'FL_plot8.png',
                                                width = 575, height = 400)),
                                   width = 12),
-                           tags$li('VIFs: ',tags$em('none above 5.0',
+                           tags$ol('VIFs: ',tags$em('none above 5.0',
                                                     style = 'font-size: 110%'))
                            )
                        
@@ -524,10 +585,10 @@ dashboardPage(
                                      style = 'color: #CCAC00; font-weight: 500;
                                         font-size:120%'),
                            background = 'navy',
-                           img(src='unsplash_doc.jpg', width = 610, height = 'auto'),
+                           img(src='unsplash_doc.png', width = 610, height = 340),
                            tags$br(),
                            tags$br(),
-                           tags$li('Although costs vary widely state-to-state, 
+                           tags$ol('Although costs vary widely state-to-state, 
                                    within-state analysis showed more expensive
                                    agencies correlated with higher acute care 
                                    admissions and lower DTC rates. This means
@@ -536,12 +597,12 @@ dashboardPage(
                                    alternative to institutional long-term care
                                    (This is desired).', 
                                    style = 'font-size: 120%'),
-                           tags$li('Patient experience survey results on caregiver
+                           tags$ol('Patient experience survey results on caregiver
                                    communication correlated with lower acute care
                                    admissions. Home healthcare teams should emphasize
                                    better communication with patients and households.', 
                                    style = 'font-size: 120%'),
-                           tags$li("Heathcare teams should focus on improving 
+                           tags$ol("Heathcare teams should focus on improving 
                            patients' ability to get in and out of bed as this 
                            factor was correlated with better discharge to 
                            community rates", 
@@ -554,15 +615,15 @@ dashboardPage(
                                      style = 'color: #CCAC00; font-weight: 500;
                                         font-size:120%'),
                            background = 'navy',
-                           img(src='unsplash_old.jpg', width = 610, height = 'auto'),
+                           img(src='unsplash_old.png', width = 610, height = 340),
                            tags$br(),
                            tags$br(),
-                           tags$li('Agency Star Ratings are given by the CMS and 
+                           tags$ol('Agency Star Ratings are given by the CMS and 
                            not by patients. It correlates well with quality of care. 
                            Patients should always find an agency with at least a 
                            Star Rating of 3 or higher.',
                                    style = 'font-size: 120%'),
-                           tags$li('Patients and family members should make sure
+                           tags$ol('Patients and family members should make sure
                                    agency caregivers spend time to communicate with
                                    you regarding your illness, pain, and medication.
                                    If you feel disatisfied, ask your agency or doctor
