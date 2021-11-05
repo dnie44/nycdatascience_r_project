@@ -10,8 +10,13 @@ However, as evident in the CMS Quality indicators , there are large discrepancie
 
 **Using home health agency data from the Centers for Medicare and Medicaid, the project explored factors associated with patient health outcomes through EDA and statistical analysis**
 
-**ShinyApp**<br> https://danielnie.shinyapps.io/homehealth/
-<br><br>
+**ShinyApp**<br> https://danielnie.shinyapps.io/homehealth/<br>
+<br>
+**Cleaned data** (.csv)<br>
+By Individual Agency: [here](https://drive.google.com/file/d/188WHzxMqJwQLoYivP8AyEF8NRGUT2d6I/)<br>
+By State: [here](https://drive.google.com/file/d/1wuWikkfnga59e9_9GdKus5M_4_QMCRjY/)<br>
+By Star-Rating: [here](https://drive.google.com/file/d/19JWjVJ00yV6Ax5GqxR6SqQy2xmpluasr/)<br>
+<br>
 
 **Data Sources:**<br>
 CMS Agency Data: https://data.cms.gov/provider-data/topics/home-health-services<br>
