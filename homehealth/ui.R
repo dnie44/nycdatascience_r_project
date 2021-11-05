@@ -76,49 +76,44 @@ dashboardPage(
                 box(width = 7, solidHeader = TRUE, 
                     title = tags$h3('Home Healthcare Agencies'),
                     background = 'navy',
-                    tags$p('Home Healthcare allows for the provision of skilled medical 
-                           care to those with mobility issues or are homebound, in the 
-                           comfort of their own homes. It is not only used for 
-                           transitional care after hospitalization, but also plays a 
-                           role in delivering preventive care to older people.',
-                           style = 'font-size: 120%'),
-                    tags$br(),
-                    tags$p('Home healthcare spending has grown rapidy.',
-                           tags$a(href="https://www.cms.gov/files/document/highlights.pdf", "CMS Expenditures"),
-                           'on home health increased 7.7% in 2019, outpacing the total 
-                           healthcare spending increase of 4.6% for the same period.',
-                           'More importantly, home health has been shown to be ',
+                    tags$p('Home Healthcare provides medical care to patients in 
+                           the comfort of their own homes. It is typically used 
+                           for transitional care, allowing patients to return home 
+                           early after invasive surgery.  But it also plays a role 
+                           in delivering preventive care to the elderly and frail 
+                           and has been shown to be ',
                            tags$a(href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC56889/", "effective"),
-                           ' in reducing mortality and admission to institutional
-                           long-term care for the elderly and frail.',
+                           'in reducing mortality and admission to long-term care 
+                           institutions for the elderly.',
                            style = 'font-size: 120%'),
                     tags$br(),
-                    tags$p('However, as evident in the CMS Quality ',
+                    tags$p('Home healthcare spending has grown rapidly. According 
+                           to the Centers for Medicare and Medicaid Services (CMS),',
+                           tags$a(href="https://www.cms.gov/files/document/highlights.pdf", "Expenditures"),
+                           'on home health increased 7.7% in 2019, outpacing the 
+                           total healthcare spending increase of 4.6% for the same period.',
+                           'However, as evident in the CMS Quality ',
                            tags$a(
                              href="https://www.cms.gov/medicare/quality-initiatives-patient-assessment-instruments/homehealthqualityinits", 
                              "indicators"),
-                           ', there are large discrepancies in the quality of care
-                           provided by different agencies. There are also very 
-                           dramatic geographic',
-                           tags$a(
-                             href="https://www.nejm.org/doi/full/10.1056/NEJM199608013350506", 
-                             "variation"),
-                             'in home healthcare utilization.',
-                           style = 'font-size: 120%')
+                           ' there are large discrepancies in the quality of care provided by 
+                           different agencies',
+                           style = 'font-size: 120%'),
+                    tags$br(),
+                    tags$p('My project begins by exploring the geographic and cost 
+                           variations among home health agencies before digging deeper 
+                           to determine factors associated with their patient health outcomes.',
+                           style = 'color: #CCAC00; font-weight: 500; font-size:120%')
                 ),
                 tags$img(src='home_health.png',width = 600, height = 350)
                 ),
               #ROW 2 - Analysis Statement
               fluidRow(
                 box(width = 11, solidHeader = TRUE, 
-                    title = p('Using home health agency data from the Centers 
-                    for Medicare and Medicaid, the project explored factors 
-                    associated with patient health outcomes through EDA and 
-                    statistical analysis',
-                              style = 'color: #CCAC00; font-weight: 500;
-                              font-size:130%'),
+                    title = p('Data Sources, Methods, & References',
+                              style = 'font-weight: 500; font-size:110%'),
                     background = 'navy', 
-                    tabBox(title = p('Data Sources & References',
+                    tabBox(title = p('',
                                      style = 'color: white; font-weight: 500'),
                            tabPanel("Data Sources",
                                     tags$ol('Agency Quality Measures: ',HTML('&nbsp;'),
@@ -144,6 +139,19 @@ dashboardPage(
                                             tags$a(href='https://drive.google.com/file/d/1gdWnjFtXQoC4zRBjlIVTWmozQZOCtmZJ/',
                                                    'here'))
                                     ),
+                           tabPanel("Methods",
+                                    tags$ol('Exploratory descriptive analysis was used
+                                            to examine current geographic utilization rates, 
+                                            costs and agency star-ratings.'),
+                                    tags$ol('Kruskal-Wallis ANOVA and the Bartlett test were 
+                                            used to discern significant differences among the 
+                                            types of agencies (privately owned, government 
+                                            owned, or non-profit).'),
+                                    tags$ol('Linear regression was used to determine factors 
+                                            associated with patient outcomes, namely acute 
+                                            care admissions rate and discharge to 
+                                            community (DTC) rate.')
+                           ),
                            tabPanel("References",
                                     tags$ol('Welch, H. G., Wennberg, D. E., & Welch, W. P. (1996). 
                                            The use of Medicare home health care services. 
@@ -202,8 +210,8 @@ dashboardPage(
                                   img(src='1993 HHA map.png', width = 400, height = 280),
                                   tags$br(),
                                   tags$br(),
-                                  tags$p('What does it look it today?',
-                                         style = 'font-weight: 500; font-size: 140%')
+                                  tags$p('What does it look like today?',
+                                         style = 'font-weight: 500; font-size: 130%')
                                   )
                               ),
                      fluidRow(box(width = NULL, solidHeader = TRUE, 
@@ -228,7 +236,7 @@ dashboardPage(
                                   tags$br(),
                                   tags$br(),
                                   tags$p('Do costs influence patient clinical outcomes?',
-                                         style = 'font-weight: 500; font-size: 140%')
+                                         style = 'font-weight: 500; font-size: 130%')
                                   )
                               ),
                      ),
@@ -588,24 +596,23 @@ dashboardPage(
                            img(src='unsplash_doc.png', width = 610, height = 340),
                            tags$br(),
                            tags$br(),
-                           tags$ol('Although costs vary widely state-to-state, 
-                                   within-state analysis showed more expensive
-                                   agencies correlated with higher acute care 
-                                   admissions and lower DTC rates. This means
-                                   at-risk patients with complicated illnesses
-                                   pay more, and may be using home health as an
-                                   alternative to institutional long-term care
-                                   (This is desired).', 
+                           tags$ol("Our within-state regression analysis showed some 
+                                   association between patient experiences regarding 
+                                   caregiver communication and acute care admissions. 
+                                   Home healthcare teams should emphasize better 
+                                   communication with patients and households.", 
                                    style = 'font-size: 120%'),
-                           tags$ol('Patient experience survey results on caregiver
-                                   communication correlated with lower acute care
-                                   admissions. Home healthcare teams should emphasize
-                                   better communication with patients and households.', 
+                           tags$ol("Healthcare teams could also focus on improving 
+                                   patients' ability to get in and out of bed as 
+                                   this factor was correlated with better discharge 
+                                   to community rates.", 
                                    style = 'font-size: 120%'),
-                           tags$ol("Heathcare teams should focus on improving 
-                           patients' ability to get in and out of bed as this 
-                           factor was correlated with better discharge to 
-                           community rates", 
+                           tags$ol('The within-state analysis showed that more expensive 
+                                   agencies correlated with higher acute care admissions 
+                                   and lower DTC rates. This means at-risk patients with 
+                                   complicated illnesses pay more and may even be using 
+                                   home health as an alternative to institutional 
+                                   long-term care. This could be a desirable alternative.', 
                                    style = 'font-size: 120%')
                            )
                        ),
@@ -618,16 +625,16 @@ dashboardPage(
                            img(src='unsplash_old.png', width = 610, height = 340),
                            tags$br(),
                            tags$br(),
-                           tags$ol('Agency Star Ratings are given by the CMS and 
-                           not by patients. It correlates well with quality of care. 
-                           Patients should always find an agency with at least a 
-                           Star Rating of 3 or higher.',
+                           tags$ol('Agency Star Ratings are given by the CMS and not by patients. 
+                                   It correlates well with quality of care. Patients are advised 
+                                   to hire an agency with at least 3 stars.',
                                    style = 'font-size: 120%'),
-                           tags$ol('Patients and family members should make sure
-                                   agency caregivers spend time to communicate with
-                                   you regarding your illness, pain, and medication.
-                                   If you feel disatisfied, ask your agency or doctor
-                                   if you can replace your home health team.',
+                           tags$ol('Patients and family members should make sure agency 
+                                   caregivers spend time communicating with them about 
+                                   their illness, pain, and medication. If the patient 
+                                   or caregiver feels dissatisfied, they should ask 
+                                   the agency or doctor to request a replacement for 
+                                   the home health team.',
                                    style = 'font-size: 120%')
                            )
                        )
@@ -636,16 +643,18 @@ dashboardPage(
               fluidRow(
                 column(10, 
                        h3('Limitations & Further Analysis'),
-                       p('Regression analysis did not yield strong results,
-                         this could be due to missing detailed agency data, such
-                         as: (1) the exact number of home health staff or teams,
-                         (2) team composition, e.g. skilled nurses, home aides, etc.
-                         (3) agency patient case-mix.',
+                       p('Regression analysis did not yield strong results. This 
+                         could be due to missing detailed agency data, such as: 
+                         (1) the exact number of home health staff or teams, 
+                         (2) team composition, e.g. skilled nurses, home aides, 
+                         etc., and most importantly, (3) agency patient case-mix 
+                         or risk profiles.',
                          style = 'font-size: 120%'),
-                       p('As next steps to the study, if agency patient case-mix
-                         information was available, studying agency features against
-                         patient outcomes for ', tags$em('specific diseases'), 
-                         ' could yield valuable results.',
+                       p('As next steps to the study, if agency patient information 
+                         is available, studying agency features against patient 
+                         outcomes for ', tags$em('specific diseases'), 
+                         ' like diabetes mellitus, COPD, or cancer, could yield 
+                         valuable results',
                          style = 'font-size: 120%')
                        )
                 )
