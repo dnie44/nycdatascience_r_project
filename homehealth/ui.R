@@ -103,6 +103,8 @@ dashboardPage(
                     tags$p('My project begins by exploring the geographic and cost 
                            variations among home health agencies before digging deeper 
                            to determine factors associated with their patient health outcomes.',
+                           tags$em(tags$a(href="https://github.com/dnie44/nycdatascience_r_project", 
+                                  "Project Github")),
                            style = 'color: #CCAC00; font-weight: 500; font-size:120%')
                 ),
                 tags$img(src='home_health.png',width = 600, height = 350)
@@ -199,19 +201,27 @@ dashboardPage(
                                             style = 'color: #CCAC00; font-weight: 500;
                                         font-size:120%'),
                                   background = 'navy',
-                                  tags$p('More than 25 years ago, there was dramatic 
-                                     geographic variation in provision of Home Health.
-                                     TN, MS, LA, AL, and GA had the highest concentrations 
-                                     of home visits, while MN, HI, and SD had the lowest.',
+                                  tags$p('In the 1990s when Home Health Services just started 
+                                         to become more popular, there was dramatic geographic',
                                          tags$a(
                                            href="https://www.nejm.org/doi/full/10.1056/NEJM199608013350506", 
-                                           "(source)"),
+                                           "variation"),
+                                         'in its utilization. The southeast region 
+                                         (TN, MS, LA, AL, GA) had the highest concentrations 
+                                         of home visits.',
                                          style = 'font-size: 120%'),
                                   img(src='1993 HHA map.png', width = 400, height = 280),
                                   tags$br(),
                                   tags$br(),
                                   tags$p('What does it look like today?',
-                                         style = 'font-weight: 500; font-size: 130%')
+                                         style = 'font-weight: 500; font-size: 130%'),
+                                  tags$p("The situation hasn't changed much.
+                                  The highest use of Home Health still occurs in the
+                                  southeast (figures 1 & 2). Some northeast states like
+                                  Massachusetts, Vermont, and New Hampshire have
+                                  increased utilization, perhaps due to dense senior
+                                         populations in those states.",
+                                         style = 'color: grey; font-size: 120%')
                                   )
                               ),
                      fluidRow(box(width = NULL, solidHeader = TRUE, 
@@ -236,7 +246,10 @@ dashboardPage(
                                   tags$br(),
                                   tags$br(),
                                   tags$p('Do costs influence patient clinical outcomes?',
-                                         style = 'font-weight: 500; font-size: 130%')
+                                         style = 'font-weight: 500; font-size: 130%'),
+                                  tags$p("In a later part of the analysis, I examine if patient 
+                                  outcomes were associated with cost discrepancies.",
+                                         style = 'color: grey; font-size: 120%')
                                   )
                               ),
                      ),
@@ -332,22 +345,24 @@ dashboardPage(
                                      style = 'color: #CCAC00; font-weight: 500;
                                         font-size:120%'),
                            background = 'navy',
-                           tags$p('Interestingly, Agencies with both high and low
-                                  star ratings are mostly privately owned, while those
-                                  with medium ratings are not.'),
+                           tags$p('Interestingly, there was a bimodal distribution in the 
+                                  type of agency in relation to star-rating. Agencies with 
+                                  both high and low star ratings are mostly privately owned, 
+                                  while those with medium ratings are not.'),
                            tags$p('How does type of agency ownership affect costs 
                                   and patient outcomes?',
                                   style = 'font-weight: 600; font-size: 120%'),
                            tags$p('The variance of costs differed significantly
                                   between types of ownership. Private and Govt owned
                                   agency costs varied greatly, while Non-profit agency
-                                  costs ranged closer to 1.0. The Kruskal-Wallis test
-                                  showed means were significanly different, and Private
-                                  agencies typically cost more.'),
-                           tags$p('The discharge to community rate means also differed
+                                  costs ranged closer to 1.0. The Kruskal-Wallis test showed 
+                                  means were significantly different, and we can observe from 
+                                  the ridge-line chart on the right that private agencies 
+                                  had higher mean costs'),
+                           tags$p('The mean discharge to community rate also differed
                                   significantly. Non-profit agencies typically performed
                                   better.'),
-                           tags$p('Acute care admissions rate means between agency types were
+                           tags$p('Mean acute care admissions rate between agency types were
                                   significanly different. Private agencies performed better.')
                            )
                        ),
@@ -418,13 +433,52 @@ dashboardPage(
                               ', the state with the 3rd most agencies (~800), and known 
                               for its high senior population density.',
                               style = 'color: white; font-weight: 500; font-size:120%'),
-                       tags$ol('*Stepwise feature selection (Forward BIC) was used to find
+                       tags$ol('* Stepwise feature selection (Forward BIC) was used to find
                               appropriate independent variables for each model.',
                               style = 'color: grey'),
-                       tags$ol('**If star-rating was included as an independent variable,
+                       tags$ol('* Star-rating was typed as a factor, and thereby dummified by R
+                       in the regression.', style = 'color: grey'),
+                       tags$ol('* If star-rating was included as an independent variable,
                               other features that went into star-rating calculation were
                               excluded, and vice versa.',
-                              style = 'color: grey')
+                              style = 'color: grey'),
+                       tags$p('Acute care admission rate findings:',
+                              style = 'color: #CCAC00; font-size:120%'),
+                       tags$p('With acute care admissions as the target dependent variable, 
+                       forward BIC selected Cost and Communication (% patients that reported 
+                       their health team communicated well with them) as features. The Beta 
+                       coefficient for Communication was -0.055 (p<0.01). That means for each 
+                       1 percent improvement in that factor, admission rate was reduced by 
+                       0.05 percent. The relationship is not large, which explains the low R2 
+                       of 0.122 (although it was still an improvement from the nation-wide 
+                       regression). The Beta coefficient of Cost was 10.15, which is not ideal 
+                              for patients.  A 1 unit increase in cost, meaning starting 
+                              from 1 and going to 2 - double the national average - actually 
+                              increased admissions rates. ',
+                              style = 'color: white; font-size:120%'),
+                       tags$p("This result actually points to a major limitation to my 
+                              analysis and deficiencies of the data set. The positive 
+                              relationship between an increase in costs and increase in 
+                              admissions risk may be due to a home health agency's 
+                              patient case-mix. Patients with complex disease and 
+                              higher risk are charged more for services. If agency 
+                              data included information on patient disease, it would 
+                              be better to conduct separate analysis for each patient
+                              risk level.",
+                              style = 'color: grey; font-weight: 500; font-size:120%'),
+                       tags$p('Discharge to community rate findings:',
+                              style = 'color: #CCAC00; font-size:120%'),
+                       tags$p('As for discharge to community (DTC) rate, forward BIC selected 
+                              Cost and Bed (how often patients got better getting in & out of 
+                              bed independently). The Beta coefficient for Bed was 0.24 (p<0.01) 
+                              which meant a positive association between improving patient 
+                              bed mobility and improved agency DTC rate. The Beta for Cost (-28.8) 
+                              was again pointing to a lack of data on patient risk profile, 
+                              as increasing agency costs worsened the expected DTC rate. 
+                              This could also mean agencies were used by some patients as a 
+                              replacement for institutionalised long-term care, thus 
+                              delaying discharge back to the community.',
+                              style = 'color: white; font-size:120%'),
                 )),
               # LEFT Column
               column(5,
